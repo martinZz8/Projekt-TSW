@@ -3,3 +3,66 @@
     font-size: 20px;
     background-color: #1a4df3be !important;
 }
+ul.menu_list > li
+{
+    list-style-type: none;
+    float: left;
+}
+ul.menu_list > li > a:hover
+{
+    background-color: rgba(0,0,0,0.7);
+    color: white!important;
+}
+a.menu_list
+{
+    height: 64px;
+    padding-top: 18px;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: block;
+    text-decoration: none;
+    font-weight: 500;
+    color: #00154F!important;
+}
+a.start:hover
+{
+    background-color: rgba(0,0,0,0.7);
+    color: white!important;
+}
+.active
+{
+    color: white!important;
+    border-bottom: 3px solid white;
+}
+.logon
+{
+    font-size: 15px!important;
+    font-weight: 600!important;
+}
+p.h_menu_item
+{
+    color: #00154F!important;
+}
+
+#hamburger_menu
+{
+    visibility: visible;
+}
+
+#normal_menu
+{
+    visibility: hidden;
+}
+
+@media all and (min-width: 768px)
+{
+    #hamburger_menu
+    {
+        visibility: hidden;
+    }
+    #normal_menu
+    {
+        visibility: visible;
+    }
+    
+}
