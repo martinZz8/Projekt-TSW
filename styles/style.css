@@ -1,7 +1,6 @@
 .app_bar
 {
     font-size: 20px;
-    background-color: #1a4df3be !important;
 }
 ul.menu_list > li
 {
@@ -43,12 +42,22 @@ p.h_menu_item
 {
     color: #00154F!important;
 }
-
+#bg_img_1
+{
+    background-image: url("../static/bg1.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-attachment: local;
+}
 #hamburger_menu
 {
     visibility: visible;
 }
-
 #normal_menu
 {
     visibility: hidden;

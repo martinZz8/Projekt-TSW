@@ -24,7 +24,7 @@
     <body>
         <div id="app">
             <v-app>
-                <v-app-bar app class="app_bar" id="hamburger_menu">
+                <v-app-bar app color="#1750caed" class="app_bar" id="hamburger_menu">
                     <img src="../static/code.png"></img>
                     <v-spacer></v-spacer>
                     <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
@@ -53,7 +53,7 @@
                     </v-list>
                 </v-navigation-drawer>
                 
-                <v-app-bar app class="app_bar" id="normal_menu">
+                <v-app-bar app color="#1750caed" class="app_bar" id="normal_menu">
                     <img src="../static/code.png" style="margin-right: 10px;"></img>
                     <a class="menu_list start active" href="../frontend/index.html">Start</a>
                     <v-spacer></v-spacer>
@@ -71,8 +71,12 @@
                     </ul>
                 </v-app-bar>
 
-                <v-main>
-                    <p>Halo</p>
+                <v-main class="pa-0">
+                    <v-row>
+                        <v-col clos="12" id="bg_img_1">
+
+                        </v-col>
+                    </v-row>
                 </v-main>
                 <v-footer dark padless>
                     <v-card class="flex" flat tile>
