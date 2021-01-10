@@ -8,7 +8,7 @@
         <meta name="description" content="Strona rezerwacji projektów z przedmiotu TSW - Politechnika Rzeszowska">
         <meta name="title" content="System rezerwacji projektów TSW">
         <link rel="shortcut icon" href="../static/favicon.ico">
-        <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" type="text/css" href="../styles/style.css">
         <!--Start: Vue + Vuetify-->
         <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
@@ -25,7 +25,7 @@
         <div id="app">
             <v-app>
                 <v-app-bar app color="#1750caed" class="app_bar" id="hamburger_menu">
-                    <img src="../static/code.png"></img>
+                    <a href="../frontend/index.html"><img src="../static/code.png"></img></a>
                     <v-spacer></v-spacer>
                     <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
                 </v-app-bar>
@@ -54,7 +54,7 @@
                 </v-navigation-drawer>
                 
                 <v-app-bar app color="#1750caed" class="app_bar" id="normal_menu">
-                    <img src="../static/code.png" style="margin-right: 10px;"></img>
+                    <a href="../frontend/index.html"><img src="../static/code.png" style="margin-right: 10px;"></img></a>
                     <a class="menu_list start active" href="../frontend/index.html">Start</a>
                     <v-spacer></v-spacer>
                     <ul class="menu_list">
