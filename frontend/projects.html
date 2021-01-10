@@ -117,7 +117,7 @@
                                             </template>
                                             </v-data-table>
                                         </v-card>
-                                        <v-dialog dark v-model="submit_dialog" max-width="500px">
+                                        <v-dialog :loading="submitting_report" dark v-model="submit_dialog" max-width="500px">
                                             <v-card>
                                                 <v-alert v-model="input_alert_1" type="error">
                                                     Podaj imię i nazwisko.
@@ -136,7 +136,7 @@
                                                 </v-container>
                                                 <v-card-actions>
                                                     <v-spacer></v-spacer>
-                                                    <v-btn color="blue darken-1" text @click="submit_dialog=false">Wróć</v-btn>
+                                                    <v-btn color="blue darken-1" text @click="submit_dialog=false, selected_project_id=''">Wróć</v-btn>
                                                     <v-btn color="blue darken-1" text @click="ReportParticipation()">Zgłoś się</v-btn>
                                                 </v-card-actions>
                                               </v-card>
@@ -196,6 +196,7 @@
             projects: [],
             search: '',
             projects_loading: false,
+            submitting_report: false,
             selected_project_id: null,
             submit_dialog: false,
             input_alert_1: false,
@@ -244,12 +245,53 @@
                     const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
                     if (re.test(String(this.email).toLowerCase()))
                     {
+                        let comp = this;
+                        let data = {
+                            project_id: comp.selected_project_id,
+                            email: comp.email,
+                            first_name: comp.first_name,
+                            second_name: comp.second_name,
+                        };
 
-                        alert("Udało się!");
+                        let dataString = JSON.stringify(data);
+                        console.log("Dane: ", dataString);
+                        let xmlhttp = new XMLHttpRequest();
+                        xmlhttp.open("POST", "../backend/select_project.php");
+                        xmlhttp.setRequestHeader("Content-Type", "application/json");
+                        
+                        xmlhttp.onprogress = function () {
+                            comp.submitting_report = true;
+                        };
 
-                        this.success_raport = true;
+                        xmlhttp.onload = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                comp.failure_message = this.responseText;
+                                console.log("Zwrot: ", comp.failure_message);
+                                if (comp.failure_message != '') {
+                                    comp.failure_raport = true;
+                                }
+                                else {
+                                    comp.success_raport = true;
+                                }
+                                comp.submitting_report = false;
+                            }
+                            else if (this.status == 0) {
+                                alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                comp.submitting_report = false;
+                            }
+                        };
+
+                        xmlhttp.onerror = function (e) {
+                            alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                            comp.submitting_report = false;
+                        };
+
+                        xmlhttp.send(dataString);
+                        
+                        this.selected_project_id = null;
                         this.submit_dialog = false;
-                        this.input_alert = false;
+                        this.input_alert_1 = false;
+                        this.input_alert_2 = false;
                     }
                     else {
                         this.input_alert_2 = true;
