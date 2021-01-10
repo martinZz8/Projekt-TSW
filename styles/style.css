@@ -65,6 +65,13 @@ p.h_menu_item
     visibility: hidden;
 }
 
+.smartphone_block
+{
+    width: 100%;
+    margin-left: 0px;
+    margin-top: 10px;
+}
+
 @media all and (min-width: 768px)
 {
     #hamburger_menu
@@ -74,6 +81,12 @@ p.h_menu_item
     #normal_menu
     {
         visibility: visible;
+    }
+    .smartphone_block
+    {
+        width: auto;
+        margin-left: 20px;
+        margin-top: 0px;
     }
     
 }

@@ -78,6 +78,14 @@
                                 <v-col cols="12" class="mt-16">
                                     <v-container>
                                         <v-card dark>
+                                            <v-alert v-model="success_raport" type="success">
+                                                Pomyślnie wybrano projekt.
+                                                <v-btn rounded color="black" text @click="success_raport=false">OK</v-btn>
+                                            </v-alert>
+                                            <v-alert v-model="failure_raport" type="error">
+                                                Nie udało się wybrać projektu. {{failure_message}}
+                                                <v-btn rounded color="black" text @click="failure_raport=false">OK</v-btn>
+                                            </v-alert>
                                             <v-card-title>
                                                 Lista projektów
                                                 <v-spacer></v-spacer>
@@ -88,6 +96,7 @@
                                                   single-line
                                                   hide-details
                                                 ></v-text-field>
+                                                <v-btn color="green" class="smartphone_block" href="../frontend/select_own_project.html">Dodaj własny projekt</v-btn>
                                             </v-card-title>
                                             <v-data-table
                                               :headers="headers"
@@ -108,6 +117,30 @@
                                             </template>
                                             </v-data-table>
                                         </v-card>
+                                        <v-dialog dark v-model="submit_dialog" max-width="500px">
+                                            <v-card>
+                                                <v-alert v-model="input_alert_1" type="error">
+                                                    Podaj imię i nazwisko.
+                                                    <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
+                                                </v-alert>
+                                                <v-alert v-model="input_alert_2" type="error">
+                                                    Podaj właściwy adres email.
+                                                    <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
+                                                </v-alert>
+                                                <v-card-title class="headline">Podaj swoje dane</v-card-title>
+                                                <v-divider></v-divider>
+                                                <v-container>
+                                                    <v-text-field v-model="email" label="Email uczelniany"></v-text-field>
+                                                    <v-text-field v-model="first_name" label="Imię"></v-text-field>
+                                                    <v-text-field v-model="second_name" label="Nazwisko"></v-text-field>
+                                                </v-container>
+                                                <v-card-actions>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn color="blue darken-1" text @click="submit_dialog=false">Wróć</v-btn>
+                                                    <v-btn color="blue darken-1" text @click="ReportParticipation()">Zgłoś się</v-btn>
+                                                </v-card-actions>
+                                              </v-card>
+                                        </v-dialog>
                                     </v-container>
                                 </v-col>
                             </v-row>
@@ -146,6 +179,9 @@
         el: '#app',
         vuetify: new Vuetify(),
         data: {
+            email: '',
+            first_name: '',
+            second_name: '',
             drawer: false,
             group: null,
             headers: [
@@ -162,6 +198,11 @@
             projects_loading: false,
             selected_project_id: null,
             submit_dialog: false,
+            input_alert_1: false,
+            input_alert_2: false,
+            success_raport: false,
+            failure_raport: false,
+            failure_message: '',
         },
         mounted: function() {
             let comp = this;
@@ -178,7 +219,7 @@
                     console.log("Zwrot: ", comp.projects);
                     comp.projects_loading = false;
                 }
-                else if (this.status == 0){
+                else if (this.status == 0) {
                     alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
                     comp.projects_loading = false;
                 }
@@ -194,9 +235,30 @@
         methods: {
             ShowForm(item) {
                 this.submit_dialog = true;
+                this.input_alert_1 = false,
+                this.input_alert_2 = false,
                 this.selected_project_id = item.id;
-                
             },
+            ReportParticipation() {
+                if (this.first_name != '' && this.second_name != '') {
+                    const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+                    if (re.test(String(this.email).toLowerCase()))
+                    {
+
+                        alert("Udało się!");
+
+                        this.success_raport = true;
+                        this.submit_dialog = false;
+                        this.input_alert = false;
+                    }
+                    else {
+                        this.input_alert_2 = true;
+                    }  
+                } 
+                else {
+                    this.input_alert_1 = true;
+                }
+            }
         }
     });
 
