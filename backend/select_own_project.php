@@ -6,7 +6,8 @@
     try {
         $connection = connect_db();
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $query = $connection->prepare("SELECT id FROM submitted_projects WHERE email='".$data->email."';");
+        $query = $connection->prepare("SELECT id FROM submitted_projects WHERE email=:email;");
+        $query->bindParam(':email', $data->email);
         $query->execute();
         $result = $query->setFetchMode(PDO::FETCH_ASSOC);
         
@@ -15,21 +16,30 @@
             $connection = connect_db();
             $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $topic = "'".$data->topic."'";
-            $description = 'null';
-            $technologies = 'null';
+            $description = "null";
+            $technologies = "null";
+            $blocked = "1";
             if ($data->description != '') {
-                $description = "'".$data->description."'";
+                $description = $data->description;
             }
             if ($data->technologies != '') {
-                $technologies = "'".$data->technologies."'";
+                $technologies = $data->technologies;
             }
-            $query = $connection->prepare("INSERT INTO project_list (topic, description, technologies, blocked) VALUES (".$topic.",".$description.",".$technologies.",1);");
+            $query = $connection->prepare("INSERT INTO project_list (topic, description, technologies, blocked) VALUES (:topic,:description,:technologies,:blocked);");
+            $query->bindParam(':topic', $topic);
+            $query->bindParam(':description', $description);
+            $query->bindParam(':technologies', $technologies);
+            $query->bindParam(':blocked', $blocked);
             $status1 = $query->execute();
             $project_id = $connection->lastInsertId();
             if ($status1) {
                 $connection = connect_db();
                 $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $query = $connection->prepare("INSERT INTO submitted_projects (email,first_name,second_name,project_id) VALUES ('".$data->email."','".$data->first_name."','".$data->second_name."','".$project_id."');");
+                $query = $connection->prepare("INSERT INTO submitted_projects (email,first_name,second_name,project_id) VALUES (:email,:first_name,:second_name,:project_id);");
+                $query->bindParam(':email', $data->email);
+                $query->bindParam(':first_name', $data->first_name);
+                $query->bindParam(':second_name', $data->second_name);
+                $query->bindParam(':project_id', $project_id);
                 $status2 = $query->execute();
                 if ($status2) {
                     echo '';
