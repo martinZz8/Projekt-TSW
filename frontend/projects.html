@@ -29,7 +29,7 @@
                     <v-spacer></v-spacer>
                     <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
                 </v-app-bar>
-                <v-navigation-drawer v-model="drawer" absolute temporary>
+                <v-navigation-drawer dark v-model="drawer" temporary fixed>
                     <v-list nav dense>
                         <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
                             <v-list-item href="../frontend/index.html">
@@ -38,7 +38,7 @@
                             </v-list-item>
                             <v-divider></v-divider>
                             <v-list-item href="../frontend/projects.html">
-                                <v-list-item-icon><v-icon>mdi-home</v-icon></v-list-item-icon>
+                                <v-list-item-icon><v-icon>mdi-console-line</v-icon></v-list-item-icon>
                                 <v-list-item-title>Projekty</v-list-item-title>
                             </v-list-item>
                             <v-list-item href="../frontend/contact.html">
@@ -71,105 +71,106 @@
                     </ul>
                 </v-app-bar>
 
-                <v-main app class="pa-0" id="bg_img_1">
-                    <v-row>
+                <v-main app class="pa-0">
+                    <v-row id="bg_img_1" style="height: 400px;">
                         <v-col clos="12">
-                            <v-row>
-                                <v-col cols="12" class="mt-16">
-                                    <v-container>
-                                        <v-card dark>
-                                            <v-alert v-model="success_raport" type="success">
-                                                Pomyślnie wybrano projekt.
-                                                <v-btn rounded color="black" text @click="success_raport=false">OK</v-btn>
-                                            </v-alert>
-                                            <v-alert v-model="failure_raport" type="error">
-                                                Nie udało się wybrać projektu. {{failure_message}}
-                                                <v-btn rounded color="black" text @click="failure_raport=false">OK</v-btn>
-                                            </v-alert>
-                                            <v-card-title>
-                                                Lista projektów
-                                                <v-spacer></v-spacer>
-                                                <v-text-field
-                                                  v-model="search"
-                                                  append-icon="mdi-magnify"
-                                                  label="Szukaj"
-                                                  single-line
-                                                  hide-details
-                                                ></v-text-field>
-                                                <v-btn color="green" class="smartphone_block" href="../frontend/select_own_project.html">Dodaj własny projekt</v-btn>
-                                            </v-card-title>
-                                            <v-data-table
-                                              :headers="headers"
-                                              :items="projects"
-                                              :search="search"
-                                              :items-per-page="15"
-                                              :loading="projects_loading"
-                                            >
-                                            <template v-slot:item="row">
-                                                <tr>
-                                                    <td>{{row.item.topic}}</td>
-                                                    <td>{{row.item.description}}</td>
-                                                    <td>{{row.item.technologies}}</td>
-                                                    <td>
-                                                        <v-btn class="mx-2" small color="#3949AB" @click="ShowForm(row.item)">Wybierz</v-btn>
-                                                    </td>
-                                                </tr>
-                                            </template>
-                                            </v-data-table>
-                                        </v-card>
-                                        <v-dialog :loading="submitting_report" dark v-model="submit_dialog" max-width="500px">
-                                            <v-card>
-                                                <v-alert v-model="input_alert_1" type="error">
-                                                    Podaj imię i nazwisko.
-                                                    <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
-                                                </v-alert>
-                                                <v-alert v-model="input_alert_2" type="error">
-                                                    Podaj właściwy adres email.
-                                                    <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
-                                                </v-alert>
-                                                <v-card-title class="headline">Podaj swoje dane</v-card-title>
-                                                <v-divider></v-divider>
-                                                <v-container>
-                                                    <v-text-field v-model="email" label="Email uczelniany"></v-text-field>
-                                                    <v-text-field v-model="first_name" label="Imię"></v-text-field>
-                                                    <v-text-field v-model="second_name" label="Nazwisko"></v-text-field>
-                                                </v-container>
-                                                <v-card-actions>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn color="blue darken-1" text @click="submit_dialog=false, selected_project_id=''">Wróć</v-btn>
-                                                    <v-btn color="blue darken-1" text @click="ReportParticipation()">Zgłoś się</v-btn>
-                                                </v-card-actions>
-                                              </v-card>
-                                        </v-dialog>
-                                    </v-container>
-                                </v-col>
-                            </v-row>
+                            
                         </v-col>
                     </v-row>
-                    <v-footer app dark padless>
-                        <v-card class="flex" flat tile>
-                            <v-card-title style="background-color: rgb(5,12,15);">
-                                <strong class="subheading">Sprawdź nasze inne witryny!</strong>
-                                <v-spacer></v-spacer>
-                                <v-btn href="http://www.facebook.com" target="_blank" class="mx-4" dark icon>
-                                    <v-icon size="24px">mdi-facebook</v-icon>
-                                </v-btn>
-                                <v-btn href="http://www.twitter.com" target="_blank" class="mx-4" dark icon>
-                                    <v-icon size="24px">mdi-twitter</v-icon>
-                                </v-btn>
-                                <v-btn href="http://www.youtube.com" target="_blank" class="mx-4" dark icon>
-                                    <v-icon size="24px">mdi-youtube</mdi-youtube></v-icon>
-                                </v-btn>
-                                <v-btn href="http://www.instagram.com" target="_blank" class="mx-4" dark icon>
-                                    <v-icon size="24px">mdi-instagram</v-icon>
-                                </v-btn>
-                            </v-card-title>
-                            <v-card-text style="background-color: rgb(2,8,12);" class="py-2 white--text text-center">
-                                <strong>{{ new Date().getFullYear() }} — &copy; Maciej Harbuz</strong>
-                            </v-card-text>
-                        </v-card>
-                    </v-footer>
+                    <v-row style="background-color: #434f52;">
+                        <v-col cols="12" class="mt-16 mb-16">
+                            <v-container>
+                                <v-card dark>
+                                    <v-alert v-model="success_raport" type="success">
+                                        Pomyślnie wybrano projekt.
+                                        <v-btn rounded color="black" text @click="success_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_raport" type="error">
+                                        Nie udało się wybrać projektu. {{failure_message}}
+                                        <v-btn rounded color="black" text @click="failure_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-card-title>
+                                        Lista projektów
+                                        <v-spacer></v-spacer>
+                                        <v-text-field
+                                          v-model="search"
+                                          append-icon="mdi-magnify"
+                                          label="Szukaj"
+                                          single-line
+                                          hide-details
+                                        ></v-text-field>
+                                        <v-btn color="green" class="smartphone_block" href="../frontend/select_own_project.html">Dodaj własny projekt</v-btn>
+                                    </v-card-title>
+                                    <v-data-table
+                                      :headers="headers"
+                                      :items="projects"
+                                      :search="search"
+                                      :items-per-page="15"
+                                      :loading="projects_loading"
+                                    >
+                                    <template v-slot:item="row">
+                                        <tr>
+                                            <td>{{row.item.topic}}</td>
+                                            <td>{{row.item.description}}</td>
+                                            <td>{{row.item.technologies}}</td>
+                                            <td>
+                                                <v-btn class="mx-2" small color="#3949AB" @click="ShowForm(row.item)">Wybierz</v-btn>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    </v-data-table>
+                                </v-card>
+                                <v-dialog :loading="submitting_report" dark v-model="submit_dialog" max-width="500px">
+                                    <v-card>
+                                        <v-alert v-model="input_alert_1" type="error">
+                                            Podaj imię i nazwisko.
+                                            <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-alert v-model="input_alert_2" type="error">
+                                            Podaj właściwy adres email.
+                                            <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-card-title class="headline">Podaj swoje dane</v-card-title>
+                                        <v-divider></v-divider>
+                                        <v-container>
+                                            <v-text-field v-model="email" label="Email uczelniany"></v-text-field>
+                                            <v-text-field v-model="first_name" label="Imię"></v-text-field>
+                                            <v-text-field v-model="second_name" label="Nazwisko"></v-text-field>
+                                        </v-container>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="blue darken-1" text @click="submit_dialog=false, selected_project_id=''">Wróć</v-btn>
+                                            <v-btn color="blue darken-1" text @click="ReportParticipation()">Zgłoś się</v-btn>
+                                        </v-card-actions>
+                                      </v-card>
+                                </v-dialog>
+                            </v-container>
+                        </v-col>
+                    </v-row>
                 </v-main>
+                <v-footer dark padless>
+                    <v-card class="flex" flat tile>
+                        <v-card-title style="background-color: rgb(5,12,15);">
+                            <strong class="subheading">Sprawdź nasze inne witryny!</strong>
+                            <v-spacer></v-spacer>
+                            <v-btn href="http://www.facebook.com" target="_blank" class="mx-4" dark icon>
+                                <v-icon size="24px">mdi-facebook</v-icon>
+                            </v-btn>
+                            <v-btn href="http://www.twitter.com" target="_blank" class="mx-4" dark icon>
+                                <v-icon size="24px">mdi-twitter</v-icon>
+                            </v-btn>
+                            <v-btn href="http://www.youtube.com" target="_blank" class="mx-4" dark icon>
+                                <v-icon size="24px">mdi-youtube</mdi-youtube></v-icon>
+                            </v-btn>
+                            <v-btn href="http://www.instagram.com" target="_blank" class="mx-4" dark icon>
+                                <v-icon size="24px">mdi-instagram</v-icon>
+                            </v-btn>
+                        </v-card-title>
+                        <v-card-text style="background-color: rgb(2,8,12);" class="py-2 white--text text-center">
+                            <strong>{{ new Date().getFullYear() }} — &copy; Maciej Harbuz</strong>
+                        </v-card-text>
+                    </v-card>
+                </v-footer>
             </v-app>
         </div>
     </body>

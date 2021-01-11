@@ -29,7 +29,7 @@
                     <v-spacer></v-spacer>
                     <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
                 </v-app-bar>
-                <v-navigation-drawer v-model="drawer" absolute temporary>
+                <v-navigation-drawer dark v-model="drawer" temporary fixed>
                     <v-list nav dense>
                         <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
                             <v-list-item href="../frontend/index.html">
@@ -38,7 +38,7 @@
                             </v-list-item>
                             <v-divider></v-divider>
                             <v-list-item href="../frontend/projects.html">
-                                <v-list-item-icon><v-icon>mdi-home</v-icon></v-list-item-icon>
+                                <v-list-item-icon><v-icon>mdi-console-line</v-icon></v-list-item-icon>
                                 <v-list-item-title>Projekty</v-list-item-title>
                             </v-list-item>
                             <v-list-item href="../frontend/contact.html">
@@ -71,37 +71,43 @@
                     </ul>
                 </v-app-bar>
 
-                <v-main app class="pa-0" id="bg_img_1">
-                    <v-row>
+                <v-main app class="pa-0">
+                    <v-row id="bg_img_1" style="height: 400px;">
                         <v-col clos="12">
 
                         </v-col>
                     </v-row>
-                    <v-footer app dark padless>
-                        <v-card class="flex" flat tile>
-                            <v-card-title style="background-color: rgb(5,12,15);">
-                                <strong class="subheading">Sprawdź nasze inne witryny!</strong>
-                                <v-spacer></v-spacer>
-                                <v-btn href="http://www.facebook.com" target="_blank" class="mx-4" dark icon>
-                                    <v-icon size="24px">mdi-facebook</v-icon>
-                                </v-btn>
-                                <v-btn href="http://www.twitter.com" target="_blank" class="mx-4" dark icon>
-                                    <v-icon size="24px">mdi-twitter</v-icon>
-                                </v-btn>
-                                <v-btn href="http://www.youtube.com" target="_blank" class="mx-4" dark icon>
-                                    <v-icon size="24px">mdi-youtube</mdi-youtube></v-icon>
-                                </v-btn>
-                                <v-btn href="http://www.instagram.com" target="_blank" class="mx-4" dark icon>
-                                    <v-icon size="24px">mdi-instagram</v-icon>
-                                </v-btn>
-                            </v-card-title>
-                            <v-card-text style="background-color: rgb(2,8,12);" class="py-2 white--text text-center">
-                                <strong>{{ new Date().getFullYear() }} — &copy; Maciej Harbuz</strong>
-                            </v-card-text>
-                        </v-card>
-                    </v-footer>
+                    <v-row style="background-color: #434f52;">
+                        <v-col cols="12">
+                            <v-container>
+                                <p>Ale jaja</p>
+                            </v-container>
+                        </v-col>
+                    </v-row>
                 </v-main>
-                
+                <v-footer dark padless>
+                    <v-card class="flex" flat tile>
+                        <v-card-title style="background-color: rgb(5,12,15);">
+                            <strong class="subheading">Sprawdź nasze inne witryny!</strong>
+                            <v-spacer></v-spacer>
+                            <v-btn href="http://www.facebook.com" target="_blank" class="mx-4" dark icon>
+                                <v-icon size="24px">mdi-facebook</v-icon>
+                            </v-btn>
+                            <v-btn href="http://www.twitter.com" target="_blank" class="mx-4" dark icon>
+                                <v-icon size="24px">mdi-twitter</v-icon>
+                            </v-btn>
+                            <v-btn href="http://www.youtube.com" target="_blank" class="mx-4" dark icon>
+                                <v-icon size="24px">mdi-youtube</mdi-youtube></v-icon>
+                            </v-btn>
+                            <v-btn href="http://www.instagram.com" target="_blank" class="mx-4" dark icon>
+                                <v-icon size="24px">mdi-instagram</v-icon>
+                            </v-btn>
+                        </v-card-title>
+                        <v-card-text style="background-color: rgb(2,8,12);" class="py-2 white--text text-center">
+                            <strong>{{ new Date().getFullYear() }} — &copy; Maciej Harbuz</strong>
+                        </v-card-text>
+                    </v-card>
+                </v-footer>
             </v-app>
         </div>
     </body>

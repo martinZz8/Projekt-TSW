@@ -52,7 +52,6 @@ p.h_menu_item
     background-size: cover;
     top: 0;
     left: 0;
-    height: 100vh;
     background-attachment: fixed;
 }
 #hamburger_menu
