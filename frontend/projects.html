@@ -74,16 +74,24 @@
                 <v-main app class="pa-0">
                     <v-row id="bg_img_1" style="height: 400px;">
                         <v-col clos="12">
-                            
+                            <v-row justify="center" style="padding-top: 200px;">
+                                <v-col cols="auto" class="box_shadow">
+                                    <h1>Zarezerwuj swój projekt</h1>
+                                </v-col>
+                            </v-row>
                         </v-col>
                     </v-row>
-                    <v-row style="background-color: #434f52;">
+                    <v-row style="background-color: #2b3335;">
                         <v-col cols="12" class="mt-16 mb-16">
                             <v-container>
                                 <v-card dark>
-                                    <v-alert v-model="success_raport" type="success">
+                                    <v-alert v-model="success_raport1" type="success">
                                         Pomyślnie wybrano projekt.
-                                        <v-btn rounded color="black" text @click="success_raport=false">OK</v-btn>
+                                        <v-btn rounded color="black" text @click="success_raport1=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="success_raport2" type="success">
+                                        Pomyślnie przesłano i wybrano projekt.
+                                        <v-btn rounded color="black" text @click="success_raport2=false">OK</v-btn>
                                     </v-alert>
                                     <v-alert v-model="failure_raport" type="error">
                                         Nie udało się wybrać projektu. {{failure_message}}
@@ -99,7 +107,7 @@
                                           single-line
                                           hide-details
                                         ></v-text-field>
-                                        <v-btn color="green" class="smartphone_block" href="../frontend/select_own_project.html">Dodaj własny projekt</v-btn>
+                                        <v-btn color="green" class="smartphone_block" @click="ShowForm2()">Dodaj własny projekt</v-btn>
                                     </v-card-title>
                                     <v-data-table
                                       :headers="headers"
@@ -120,7 +128,7 @@
                                     </template>
                                     </v-data-table>
                                 </v-card>
-                                <v-dialog :loading="submitting_report" dark v-model="submit_dialog" max-width="500px">
+                                <v-dialog :loading="submitting_report1" dark v-model="submit_dialog" max-width="500px">
                                     <v-card>
                                         <v-alert v-model="input_alert_1" type="error">
                                             Podaj imię i nazwisko.
@@ -141,6 +149,45 @@
                                             <v-spacer></v-spacer>
                                             <v-btn color="blue darken-1" text @click="submit_dialog=false, selected_project_id=''">Wróć</v-btn>
                                             <v-btn color="blue darken-1" text @click="ReportParticipation()">Zgłoś się</v-btn>
+                                        </v-card-actions>
+                                      </v-card>
+                                </v-dialog>
+                                <v-dialog :loading="submitting_report2" dark v-model="select_own_project_dialog" max-width="500px">
+                                    <v-card>
+                                        <v-alert v-model="input_alert_1" type="error">
+                                            Podaj imię i nazwisko.
+                                            <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-alert v-model="input_alert_2" type="error">
+                                            Podaj właściwy adres email.
+                                            <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-alert v-model="input_alert_3" type="error">
+                                            Podaj tytuł.
+                                            <v-btn rounded color="black" text @click="input_alert_3=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-alert v-model="input_alert_4" type="error">
+                                            Podaj krótszy tytuł projektu (maksymalnie 300 znaków).
+                                            <v-btn rounded color="black" text @click="input_alert_4=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-card-title class="headline">Podaj swoje dane</v-card-title>
+                                        <v-divider></v-divider>
+                                        <v-container>
+                                            <v-text-field v-model="email" label="Email uczelniany"></v-text-field>
+                                            <v-text-field v-model="first_name" label="Imię"></v-text-field>
+                                            <v-text-field v-model="second_name" label="Nazwisko"></v-text-field>
+                                        </v-container>
+                                        <v-card-title class="headline">Podaj dane projektu</v-card-title>
+                                        <v-divider></v-divider>
+                                        <v-container>
+                                            <v-textarea rows="1" auto-grow counter :rules="[v => v.length <= 300 || 'Maksymalnie 300 znaków']" v-model="own_p_topic" label="Tytuł"></v-textarea>
+                                            <v-textarea rows="3" auto-grow counter v-model="own_p_description" label="Opis projektu"></v-textarea>
+                                            <v-textarea rows="1" auto-grow counter v-model="own_p_technologies" label="Technologie (jeśli nie wiesz - zostaw puste pole)"></v-textarea>
+                                        </v-container>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="blue darken-1" text @click="select_own_project_dialog=false">Wróć</v-btn>
+                                            <v-btn color="blue darken-1" text @click="ReportOwnParticipation()">Prześlij projekt</v-btn>
                                         </v-card-actions>
                                       </v-card>
                                 </v-dialog>
@@ -197,55 +244,76 @@
             projects: [],
             search: '',
             projects_loading: false,
-            submitting_report: false,
+            submitting_report1: false,
             selected_project_id: null,
             submit_dialog: false,
             input_alert_1: false,
             input_alert_2: false,
-            success_raport: false,
+            success_raport1: false,
             failure_raport: false,
             failure_message: '',
+            select_own_project_dialog: false,
+            submitting_report2: false,
+            input_alert_3: false,
+            input_alert_4: false,
+            own_p_topic: '',
+            own_p_description: '',
+            own_p_technologies: '',
+            success_raport2: false,
+
         },
         mounted: function() {
-            let comp = this;
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("GET", "../backend/get_projects.php", true);
-            
-            xmlhttp.onprogress = function () {
-                comp.projects_loading = true;
-            };
+            this.DownloadProjects();
 
-            xmlhttp.onload = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    comp.projects = JSON.parse(this.responseText);
-                    console.log("Zwrot: ", comp.projects);
-                    comp.projects_loading = false;
-                }
-                else if (this.status == 0) {
-                    alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
-                    comp.projects_loading = false;
-                }
-            };
-
-            xmlhttp.onerror = function (e) {
-                alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
-                comp.projects_loading = false;
-            };
-            
-            xmlhttp.send();
         },
         methods: {
+            DownloadProjects() {
+                let comp = this;
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("GET", "../backend/get_projects.php", true);
+                
+                xmlhttp.onprogress = function () {
+                    comp.projects_loading = true;
+                };
+
+                xmlhttp.onload = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        comp.projects = JSON.parse(this.responseText);
+                        console.log("Zwrot: ", comp.projects);
+                        comp.projects_loading = false;
+                    }
+                    else if (this.status == 0) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                        comp.projects_loading = false;
+                    }
+                };
+
+                xmlhttp.onerror = function (e) {
+                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                    comp.projects_loading = false;
+                };
+                
+                xmlhttp.send();
+            },
             ShowForm(item) {
                 this.submit_dialog = true;
-                this.input_alert_1 = false,
-                this.input_alert_2 = false,
+                this.input_alert_1 = false;
+                this.input_alert_2 = false;
+                this.input_alert_3 = false;
+                this.input_alert_4 = false;
                 this.selected_project_id = item.id;
+            },
+            ShowForm2() {
+                this.select_own_project_dialog = true;
+                this.input_alert_1 = false;
+                this.input_alert_2 = false;
+                this.input_alert_3 = false;
+                this.input_alert_4 = false;
             },
             ReportParticipation() {
                 if (this.first_name != '' && this.second_name != '') {
                     const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-                    if (re.test(String(this.email).toLowerCase()))
-                    {
+                    if (re.test(String(this.email).toLowerCase())) {
                         let comp = this;
                         let data = {
                             project_id: comp.selected_project_id,
@@ -261,7 +329,7 @@
                         xmlhttp.setRequestHeader("Content-Type", "application/json");
                         
                         xmlhttp.onprogress = function () {
-                            comp.submitting_report = true;
+                            comp.submitting_report1 = true;
                         };
 
                         xmlhttp.onload = function () {
@@ -272,19 +340,19 @@
                                     comp.failure_raport = true;
                                 }
                                 else {
-                                    comp.success_raport = true;
+                                    comp.success_raport1 = true;
                                 }
-                                comp.submitting_report = false;
+                                comp.submitting_report1 = false;
                             }
                             else if (this.status == 0) {
                                 alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
-                                comp.submitting_report = false;
+                                comp.submitting_report1 = false;
                             }
                         };
 
                         xmlhttp.onerror = function (e) {
                             alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
-                            comp.submitting_report = false;
+                            comp.submitting_report1 = false;
                         };
 
                         xmlhttp.send(dataString);
@@ -293,6 +361,79 @@
                         this.submit_dialog = false;
                         this.input_alert_1 = false;
                         this.input_alert_2 = false;
+                    }
+                    else {
+                        this.input_alert_2 = true;
+                    }  
+                } 
+                else {
+                    this.input_alert_1 = true;
+                }
+            },
+            ReportOwnParticipation() {
+                if (this.first_name != '' && this.second_name != '') {
+                    const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+                    if (re.test(String(this.email).toLowerCase())) {
+                        if (this.own_p_topic.length != 0) {
+                            if (this.own_p_topic.length <= 300) {
+                                let comp = this;
+                                let data = {
+                                    email: comp.email,
+                                    first_name: comp.first_name,
+                                    second_name: comp.second_name,
+                                    topic: comp.own_p_topic,
+                                    description: comp.own_p_description,
+                                    technologies: comp.own_p_technologies,
+                                };
+
+                                let dataString = JSON.stringify(data);
+                                console.log("Dane: ", dataString);
+                                let xmlhttp = new XMLHttpRequest();
+                                xmlhttp.open("POST", "../backend/select_own_project.php");
+                                xmlhttp.setRequestHeader("Content-Type", "application/json");
+                                
+                                xmlhttp.onprogress = function () {
+                                    comp.submitting_report2 = true;
+                                };
+
+                                xmlhttp.onload = function () {
+                                    if (this.readyState == 4 && this.status == 200) {
+                                        comp.failure_message = this.responseText;
+                                        console.log("Zwrot: ", comp.failure_message);
+                                        if (comp.failure_message != '') {
+                                            comp.failure_raport = true;
+                                        }
+                                        else {
+                                            comp.success_raport2 = true;
+                                        }
+                                        comp.submitting_report2 = false;
+                                    }
+                                    else if (this.status == 0) {
+                                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                        comp.submitting_report2 = false;
+                                    }
+                                };
+
+                                xmlhttp.onerror = function (e) {
+                                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                                    comp.submitting_report2 = false;
+                                };
+
+                                xmlhttp.send(dataString);
+                                
+                                this.select_own_project_dialog = false;
+                                this.input_alert_1 = false;
+                                this.input_alert_2 = false;
+                                this.input_alert_3 = false;
+                                this.input_alert_4 = false;
+                            }
+                            else {
+                                this.input_alert_4 = true;
+                            }
+                        }
+                        else {
+                            this.input_alert_3 = true;
+                        }
                     }
                     else {
                         this.input_alert_2 = true;

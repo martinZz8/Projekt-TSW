@@ -54,6 +54,15 @@ p.h_menu_item
     left: 0;
     background-attachment: fixed;
 }
+.box_shadow
+{
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0px 0px 50px 50px rgba(0,0,0,0.7);
+}
+h1
+{
+    color: white;
+}
 #hamburger_menu
 {
     visibility: visible;

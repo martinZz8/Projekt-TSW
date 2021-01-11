@@ -12,14 +12,16 @@
         
         $row = $query->fetch();
         if ($row == NULL) {
-            try {
-                $connection = connect_db();
-                $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $query = $connection->prepare("INSERT INTO submitted_projects (email,first_name,second_name,project_id) VALUES ('".$data->email."','".$data->first_name."','".$data->second_name."','".$data->project_id."');");
-                $query->execute();
+            $connection = connect_db();
+            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $query = $connection->prepare("INSERT INTO submitted_projects (email,first_name,second_name,project_id) VALUES ('".$data->email."','".$data->first_name."','".$data->second_name."',".$data->project_id.");");
+            $status1 = $query->execute();
+            if ($status1) {
                 echo '';
-            } catch (PDOException $e) {
-                echo "Error: " . $e->getMessage();
+            }
+            else {
+                $error = "Wystąpił nieoczekiwany problem (KOD: 1). Spróbuj ponownie później.";
+                echo $error;
             }
         }
         else {
