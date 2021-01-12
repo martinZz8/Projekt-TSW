@@ -33,7 +33,7 @@ a.start:hover
     color: white!important;
     border-bottom: 3px solid white;
 }
-.logon
+.login, .logout
 {
     font-size: 15px!important;
     font-weight: 600!important;

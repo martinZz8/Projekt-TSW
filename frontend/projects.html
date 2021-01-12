@@ -32,11 +32,18 @@
                 <v-navigation-drawer dark v-model="drawer" temporary fixed>
                     <v-list nav dense>
                         <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
+                            <v-list-item v-if="logged_in" style="cursor: default;">
+                                <v-list-item-icon><v-icon>mdi-account</v-icon></v-list-item-icon>
+                                <v-list-item-title>Zalogowany jako:</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="logged_in" style="cursor: default;">
+                                <v-list-item-title>{{user_email}}</v-list-item-title>
+                            </v-list-item>
+                            <v-divider></v-divider>
                             <v-list-item href="../frontend/index.html">
                                 <v-list-item-icon><v-icon>mdi-home</v-icon></v-list-item-icon>
                                 <v-list-item-title>Start</v-list-item-title>
                             </v-list-item>
-                            <v-divider></v-divider>
                             <v-list-item href="../frontend/projects.html">
                                 <v-list-item-icon><v-icon>mdi-console-line</v-icon></v-list-item-icon>
                                 <v-list-item-title>Projekty</v-list-item-title>
@@ -45,9 +52,13 @@
                                 <v-list-item-icon><v-icon>mdi-email</v-icon></v-list-item-icon>
                                 <v-list-item-title>Kontakt</v-list-item-title>
                             </v-list-item>
-                            <v-list-item href="../frontend/logon.html">
+                            <v-list-item v-if="!logged_in" href="../frontend/login.html">
                                 <v-list-item-icon><v-icon>mdi-login</v-icon></v-list-item-icon>
                                 <v-list-item-title>Zaloguj się!</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-else @click="LogOut()">
+                                <v-list-item-icon><v-icon>mdi-logout</v-icon></v-list-item-icon>
+                                <v-list-item-title>Wyloguj się</v-list-item-title>
                             </v-list-item>
                         </v-list-item-group>
                     </v-list>
@@ -64,14 +75,25 @@
                         <li>
                             <a class="menu_list" href="../frontend/contact.html">Kontakt</a>
                         </li>
-                        <li>
-                            <!--<a class="menu_list" href="../frontend/logon.html">Zaloguj się!</a>-->
-                            <v-btn outlined elevation="3" large class="mt-2 ml-10 logon" href="../frontend/logon.html">Zaloguj się!</v-btn>
-                        </li>      
+                        <li v-if="!logged_in">
+                            <v-btn outlined elevation="3" large class="mt-2 ml-10 login" href="../frontend/login.html">Zaloguj się!</v-btn>
+                        </li>
+                        <li v-else>
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pt-3 pb-0">
+                                    <p style="margin: 0;">{{user_email}}</p>
+                                </v-col>
+                            </v-row>
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pt-2 pb-0">
+                                    <v-btn outlined elevation="3" small class="logout" @click="LogOut()">Wyloguj się</v-btn>
+                                </v-col>
+                            </v-row>
+                        </li>   
                     </ul>
                 </v-app-bar>
 
-                <v-main app class="pa-0">
+                <v-main class="pa-0">
                     <v-row id="bg_img_1" style="height: 400px;">
                         <v-col clos="12">
                             <v-row justify="center" style="padding-top: 200px;">
@@ -232,6 +254,8 @@
             second_name: '',
             drawer: false,
             group: null,
+            logged_in: false,
+            user_email: null,
             headers: [
                 {
                 text: 'Temat',
@@ -263,10 +287,24 @@
 
         },
         mounted: function() {
+            if (localStorage.getItem('logged_in') && localStorage.getItem('user_email')) {
+                this.logged_in = localStorage.getItem('logged_in');
+                this.user_email = localStorage.getItem('user_email');
+            }
+
             this.DownloadProjects();
 
         },
         methods: {
+            LogOut() {
+                if (localStorage.getItem('logged_in')) {
+                    localStorage.removeItem('logged_in');
+                }
+                if (localStorage.getItem('user_email')) {
+                    localStorage.removeItem('user_email');
+                }
+                window.location.replace('../frontend/index.html');
+            },
             DownloadProjects() {
                 let comp = this;
                 var xmlhttp = new XMLHttpRequest();

@@ -37,7 +37,7 @@
                                 <v-list-item-title>Zalogowany jako:</v-list-item-title>
                             </v-list-item>
                             <v-list-item v-if="logged_in" style="cursor: default;">
-                                <v-list-item-title>{{user_email}}</v-list-item-title>
+                                <v-list-item-title>Zalogowany jako: {{user_email}}</v-list-item-title>
                             </v-list-item>
                             <v-divider></v-divider>
                             <v-list-item href="../frontend/index.html">
@@ -66,7 +66,7 @@
                 
                 <v-app-bar app color="#1750caed" class="app_bar" id="normal_menu">
                     <a href="../frontend/index.html"><img src="../static/code.png" style="margin-right: 10px;"></img></a>
-                    <a class="menu_list start active" href="../frontend/index.html">Start</a>
+                    <a class="menu_list start" href="../frontend/index.html">Start</a>
                     <v-spacer></v-spacer>
                     <ul class="menu_list">
                         <li>
@@ -98,16 +98,29 @@
                         <v-col clos="12">
                             <v-row justify="center" style="padding-top: 200px;">
                                 <v-col cols="auto" class="box_shadow">
-                                    <h1>System rezerwacji projektów</h1>
+                                    <h1>Zaloguj się</h1>
                                 </v-col>
                             </v-row>
                         </v-col>
                     </v-row>
-                    <v-row style="background-color: #2b3335; min-height: 600px;">
-                        <v-col cols="12">
-                            <v-container>
-                                <p>Tutaj wstaw treść</p>
-                            </v-container>
+                    <v-row justify="center" style="background-color: #2b3335; min-height: 600px;">
+                        <v-col cols="11" xs="11" sm="7" md="5" lg="3"xl="3">
+                            <v-card dark :loading="login_in_progress" class="mt-16 mb-16">
+                                <v-alert v-model="login_alert_1" type="error">
+                                    Niepoprawne dane logowania.
+                                    <v-btn rounded color="black" text @click="login_alert_1=false">OK</v-btn>
+                                </v-alert>
+                                <v-card-title class="headline">Podaj dane logowania</v-card-title>
+                                <v-divider></v-divider>
+                                <v-container>
+                                    <v-text-field v-model="user_email" label="Email"></v-text-field>
+                                    <v-text-field v-model="user_password" label="Hasło"></v-text-field>
+                                </v-container>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="LogIn()">Zaloguj</v-btn>
+                                </v-card-actions>
+                            </v-card>
                         </v-col>
                     </v-row>
                 </v-main>
@@ -147,6 +160,9 @@
             group: null,
             logged_in: false,
             user_email: null,
+            user_password: null,
+            login_in_progress: false,
+            login_alert_1: false,
 
         },
         mounted: function() {
@@ -156,6 +172,9 @@
             }
         },
         methods: {
+            LogIn() {
+
+            },
             LogOut() {
                 if (localStorage.getItem('logged_in')) {
                     localStorage.removeItem('logged_in');
