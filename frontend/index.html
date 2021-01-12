@@ -150,7 +150,7 @@
 
         },
         mounted: function() {
-            if (localStorage.getItem('logged_in') && localStorage.getItem('user_email')) {
+            if (localStorage.getItem('logged_in') == true && localStorage.getItem('user_email')) {
                 this.logged_in = localStorage.getItem('logged_in');
                 this.user_email = localStorage.getItem('user_email');
             }

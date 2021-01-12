@@ -106,9 +106,17 @@
                     <v-row justify="center" style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="11" xs="11" sm="7" md="5" lg="3"xl="3">
                             <v-card dark :loading="login_in_progress" class="mt-16 mb-16">
-                                <v-alert v-model="login_alert_1" type="error">
-                                    Niepoprawne dane logowania.
-                                    <v-btn rounded color="black" text @click="login_alert_1=false">OK</v-btn>
+                                <v-alert v-model="input_alert_1" type="error">
+                                    Podaj hasło.
+                                    <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
+                                </v-alert>
+                                <v-alert v-model="input_alert_2" type="error">
+                                    Podaj właściwy adres email.
+                                    <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
+                                </v-alert>
+                                <v-alert v-model="login_failure" type="error">
+                                    Nie udało się zalogować. {{failure_message}}
+                                    <v-btn rounded color="black" text @click="login_failure=false">OK</v-btn>
                                 </v-alert>
                                 <v-card-title class="headline">Podaj dane logowania</v-card-title>
                                 <v-divider></v-divider>
@@ -159,21 +167,83 @@
             drawer: false,
             group: null,
             logged_in: false,
-            user_email: null,
-            user_password: null,
+            user_email: '',
+            user_password: '',
             login_in_progress: false,
-            login_alert_1: false,
+            input_alert_1: false,
+            input_alert_2: false,
+            login_failure: false,
+            failure_message: '',
 
         },
         mounted: function() {
-            if (localStorage.getItem('logged_in') && localStorage.getItem('user_email')) {
+            if (localStorage.getItem('logged_in') == true && localStorage.getItem('user_email')) {
                 this.logged_in = localStorage.getItem('logged_in');
                 this.user_email = localStorage.getItem('user_email');
             }
         },
         methods: {
             LogIn() {
+                if (this.user_password != '') {
+                    const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+                    if (re.test(String(this.user_email).toLowerCase())) {
+                        let comp = this;
+                        let data = {
+                            user_email: comp.user_email,
+                            user_password: comp.user_password,
+                        };
 
+                        let dataString = JSON.stringify(data);
+                        console.log("Dane: ", dataString);
+                        let xmlhttp = new XMLHttpRequest();
+                        xmlhttp.open("POST", "../backend/log_in_verify.php");
+                        xmlhttp.setRequestHeader("Content-Type", "application/json");
+                        
+                        xmlhttp.onprogress = function () {
+                            comp.login_in_progress = true;
+                        };
+
+                        xmlhttp.onload = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                let response = JSON.parse(this.responseText);
+                                console.log("Zwrot loginu: ", response);
+                                let login_status = response.login_status;
+                                if (login_status == 'false') {
+                                    comp.failure_message = response.error;
+                                    comp.login_failure = true;
+                                }
+                                else {
+                                    console.log("Zalogowano ");
+                                    localStorage.setItem('logged_in', true);
+                                    localStorage.setItem('user_email', response.user_email);
+                                    //window.location.replace('../frontend/projects.html');
+                                }
+                                comp.login_in_progress = false;
+                            }
+                            else if (this.status == 0) {
+                                alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                comp.login_in_progress = false;
+                            }
+                        };
+
+                        xmlhttp.onerror = function (e) {
+                            alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                            comp.login_in_progress = false;
+                        };
+
+                        xmlhttp.send(dataString);
+                        
+                        this.input_alert_1 = false;
+                        this.input_alert_2 = false;
+                        
+                    }
+                    else {
+                        this.input_alert_2 = true;
+                    }
+                }
+                else {
+                    this.input_alert_1 = true;
+                }
             },
             LogOut() {
                 if (localStorage.getItem('logged_in')) {

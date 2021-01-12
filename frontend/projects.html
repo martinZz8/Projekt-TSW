@@ -287,7 +287,7 @@
 
         },
         mounted: function() {
-            if (localStorage.getItem('logged_in') && localStorage.getItem('user_email')) {
+            if (localStorage.getItem('logged_in') == true && localStorage.getItem('user_email')) {
                 this.logged_in = localStorage.getItem('logged_in');
                 this.user_email = localStorage.getItem('user_email');
             }
@@ -379,7 +379,9 @@
                                     comp.failure_raport = true;
                                 }
                                 else {
+                                    comp.selected_project_id = null;
                                     comp.success_raport1 = true;
+                                    comp.submit_dialog = false;
                                 }
                                 comp.submitting_report1 = false;
                             }
@@ -396,8 +398,6 @@
 
                         xmlhttp.send(dataString);
                         
-                        this.selected_project_id = null;
-                        this.submit_dialog = false;
                         this.input_alert_1 = false;
                         this.input_alert_2 = false;
                     }
@@ -444,6 +444,7 @@
                                         }
                                         else {
                                             comp.success_raport2 = true;
+                                            comp.select_own_project_dialog = false;
                                         }
                                         comp.submitting_report2 = false;
                                     }
@@ -460,7 +461,6 @@
 
                                 xmlhttp.send(dataString);
                                 
-                                this.select_own_project_dialog = false;
                                 this.input_alert_1 = false;
                                 this.input_alert_2 = false;
                                 this.input_alert_3 = false;
