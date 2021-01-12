@@ -103,7 +103,7 @@
                             </v-row>
                         </v-col>
                     </v-row>
-                    <v-row style="background-color: #2b3335; min-height: 600px;"> <!--v-if="logged_in"-->
+                    <v-row v-if="logged_in" style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="12" class="mt-16 mb-16">
                             <v-container>
                                 <v-card dark>
@@ -156,14 +156,9 @@
                                             Podaj imię i nazwisko.
                                             <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
                                         </v-alert>
-                                        <v-alert v-model="input_alert_2" type="error">
-                                            Podaj właściwy adres email.
-                                            <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
-                                        </v-alert>
                                         <v-card-title class="headline">Podaj swoje dane</v-card-title>
                                         <v-divider></v-divider>
                                         <v-container>
-                                            <v-text-field v-model="email" label="Email uczelniany"></v-text-field>
                                             <v-text-field v-model="first_name" label="Imię"></v-text-field>
                                             <v-text-field v-model="second_name" label="Nazwisko"></v-text-field>
                                         </v-container>
@@ -181,21 +176,16 @@
                                             <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
                                         </v-alert>
                                         <v-alert v-model="input_alert_2" type="error">
-                                            Podaj właściwy adres email.
+                                            Podaj tytuł.
                                             <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
                                         </v-alert>
                                         <v-alert v-model="input_alert_3" type="error">
-                                            Podaj tytuł.
-                                            <v-btn rounded color="black" text @click="input_alert_3=false">OK</v-btn>
-                                        </v-alert>
-                                        <v-alert v-model="input_alert_4" type="error">
                                             Podaj krótszy tytuł projektu (maksymalnie 300 znaków).
-                                            <v-btn rounded color="black" text @click="input_alert_4=false">OK</v-btn>
+                                            <v-btn rounded color="black" text @click="input_alert_3=false">OK</v-btn>
                                         </v-alert>
                                         <v-card-title class="headline">Podaj swoje dane</v-card-title>
                                         <v-divider></v-divider>
                                         <v-container>
-                                            <v-text-field v-model="email" label="Email uczelniany"></v-text-field>
                                             <v-text-field v-model="first_name" label="Imię"></v-text-field>
                                             <v-text-field v-model="second_name" label="Nazwisko"></v-text-field>
                                         </v-container>
@@ -215,7 +205,15 @@
                                 </v-dialog>
                             </v-container>
                         </v-col>
-                    </v-row> <!--v-else-->
+                    </v-row>
+                    <v-row v-else justify="center" style="background-color: #2b3335; min-height: 600px;">
+                        <v-col cols="12">
+                            <v-container>
+                                <p style="color: white;">Nie masz dostępu do tej treści.</p>
+                                <p style="color: white;"><a href="../frontend/login.html">Zaloguj się</a> aby uzyskać dostęp do zawartości.</p>
+                            </v-container>
+                        </v-col>
+                    </v-row>
                 </v-main>
                 <v-footer dark padless>
                     <v-card class="flex" flat tile>
@@ -249,13 +247,12 @@
         el: '#app',
         vuetify: new Vuetify(),
         data: {
-            email: '',
             first_name: '',
             second_name: '',
             drawer: false,
             group: null,
             logged_in: false,
-            user_email: null,
+            user_email: '',
             headers: [
                 {
                 text: 'Temat',
@@ -272,14 +269,13 @@
             selected_project_id: null,
             submit_dialog: false,
             input_alert_1: false,
-            input_alert_2: false,
             success_raport1: false,
             failure_raport: false,
             failure_message: '',
             select_own_project_dialog: false,
             submitting_report2: false,
+            input_alert_2: false,
             input_alert_3: false,
-            input_alert_4: false,
             own_p_topic: '',
             own_p_description: '',
             own_p_technologies: '',
@@ -292,9 +288,9 @@
                 this.user_email = localStorage.getItem('user_email');
             }
 
-            //if (this.logged_in) zrób co niżej
-            this.DownloadProjects();
-
+            if (this.logged_in) {
+                this.DownloadProjects();
+            }
         },
         methods: {
             LogOut() {
@@ -339,7 +335,6 @@
                 this.input_alert_1 = false;
                 this.input_alert_2 = false;
                 this.input_alert_3 = false;
-                this.input_alert_4 = false;
                 this.selected_project_id = item.id;
             },
             ShowForm2() {
@@ -347,63 +342,56 @@
                 this.input_alert_1 = false;
                 this.input_alert_2 = false;
                 this.input_alert_3 = false;
-                this.input_alert_4 = false;
             },
             ReportParticipation() {
                 if (this.first_name != '' && this.second_name != '') {
-                    const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-                    if (re.test(String(this.email).toLowerCase())) {
-                        let comp = this;
-                        let data = {
-                            project_id: comp.selected_project_id,
-                            email: comp.email,
-                            first_name: comp.first_name,
-                            second_name: comp.second_name,
-                        };
+                    let comp = this;
+                    let data = {
+                        project_id: comp.selected_project_id,
+                        email: comp.user_email,
+                        first_name: comp.first_name,
+                        second_name: comp.second_name,
+                    };
 
-                        let dataString = JSON.stringify(data);
-                        console.log("Dane: ", dataString);
-                        let xmlhttp = new XMLHttpRequest();
-                        xmlhttp.open("POST", "../backend/select_project.php");
-                        xmlhttp.setRequestHeader("Content-Type", "application/json");
-                        
-                        xmlhttp.onprogress = function () {
-                            comp.submitting_report1 = true;
-                        };
+                    let dataString = JSON.stringify(data);
+                    console.log("Dane: ", dataString);
+                    let xmlhttp = new XMLHttpRequest();
+                    xmlhttp.open("POST", "../backend/select_project.php");
+                    xmlhttp.setRequestHeader("Content-Type", "application/json");
+                    
+                    xmlhttp.onprogress = function () {
+                        comp.submitting_report1 = true;
+                    };
 
-                        xmlhttp.onload = function () {
-                            if (this.readyState == 4 && this.status == 200) {
-                                comp.failure_message = this.responseText;
-                                console.log("Zwrot: ", comp.failure_message);
-                                if (comp.failure_message != '') {
-                                    comp.failure_raport = true;
-                                }
-                                else {
-                                    comp.selected_project_id = null;
-                                    comp.success_raport1 = true;
-                                    comp.submit_dialog = false;
-                                }
-                                comp.submitting_report1 = false;
+                    xmlhttp.onload = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            comp.failure_message = this.responseText;
+                            console.log("Zwrot: ", comp.failure_message);
+                            if (comp.failure_message != '') {
+                                comp.failure_raport = true;
+                                comp.submit_dialog = false;
                             }
-                            else if (this.status == 0) {
-                                alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
-                                comp.submitting_report1 = false;
+                            else {
+                                comp.selected_project_id = null;
+                                comp.success_raport1 = true;
+                                comp.submit_dialog = false;
                             }
-                        };
-
-                        xmlhttp.onerror = function (e) {
-                            alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
                             comp.submitting_report1 = false;
-                        };
+                        }
+                        else if (this.status == 0) {
+                            alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                            comp.submitting_report1 = false;
+                        }
+                    };
 
-                        xmlhttp.send(dataString);
-                        
-                        this.input_alert_1 = false;
-                        this.input_alert_2 = false;
-                    }
-                    else {
-                        this.input_alert_2 = true;
-                    }  
+                    xmlhttp.onerror = function (e) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                        comp.submitting_report1 = false;
+                    };
+
+                    xmlhttp.send(dataString);
+                    
+                    this.input_alert_1 = false;  
                 } 
                 else {
                     this.input_alert_1 = true;
@@ -411,64 +399,58 @@
             },
             ReportOwnParticipation() {
                 if (this.first_name != '' && this.second_name != '') {
-                    const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-                    if (re.test(String(this.email).toLowerCase())) {
-                        if (this.own_p_topic.length != 0) {
-                            if (this.own_p_topic.length <= 300) {
-                                let comp = this;
-                                let data = {
-                                    email: comp.email,
-                                    first_name: comp.first_name,
-                                    second_name: comp.second_name,
-                                    topic: comp.own_p_topic,
-                                    description: comp.own_p_description,
-                                    technologies: comp.own_p_technologies,
-                                };
+                    if (this.own_p_topic.length != 0) {
+                        if (this.own_p_topic.length <= 300) {
+                            let comp = this;
+                            let data = {
+                                email: comp.user_email,
+                                first_name: comp.first_name,
+                                second_name: comp.second_name,
+                                topic: comp.own_p_topic,
+                                description: comp.own_p_description,
+                                technologies: comp.own_p_technologies,
+                            };
 
-                                let dataString = JSON.stringify(data);
-                                console.log("Dane: ", dataString);
-                                let xmlhttp = new XMLHttpRequest();
-                                xmlhttp.open("POST", "../backend/select_own_project.php");
-                                xmlhttp.setRequestHeader("Content-Type", "application/json");
-                                
-                                xmlhttp.onprogress = function () {
-                                    comp.submitting_report2 = true;
-                                };
+                            let dataString = JSON.stringify(data);
+                            console.log("Dane: ", dataString);
+                            let xmlhttp = new XMLHttpRequest();
+                            xmlhttp.open("POST", "../backend/select_own_project.php");
+                            xmlhttp.setRequestHeader("Content-Type", "application/json");
+                            
+                            xmlhttp.onprogress = function () {
+                                comp.submitting_report2 = true;
+                            };
 
-                                xmlhttp.onload = function () {
-                                    if (this.readyState == 4 && this.status == 200) {
-                                        comp.failure_message = this.responseText;
-                                        console.log("Zwrot: ", comp.failure_message);
-                                        if (comp.failure_message != '') {
-                                            comp.failure_raport = true;
-                                        }
-                                        else {
-                                            comp.success_raport2 = true;
-                                            comp.select_own_project_dialog = false;
-                                        }
-                                        comp.submitting_report2 = false;
+                            xmlhttp.onload = function () {
+                                if (this.readyState == 4 && this.status == 200) {
+                                    comp.failure_message = this.responseText;
+                                    console.log("Zwrot: ", comp.failure_message);
+                                    if (comp.failure_message != '') {
+                                        comp.failure_raport = true;
+                                        comp.select_own_project_dialog = false;
                                     }
-                                    else if (this.status == 0) {
-                                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
-                                        comp.submitting_report2 = false;
+                                    else {
+                                        comp.success_raport2 = true;
+                                        comp.select_own_project_dialog = false;
                                     }
-                                };
-
-                                xmlhttp.onerror = function (e) {
-                                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
                                     comp.submitting_report2 = false;
-                                };
+                                }
+                                else if (this.status == 0) {
+                                    alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                    comp.submitting_report2 = false;
+                                }
+                            };
 
-                                xmlhttp.send(dataString);
-                                
-                                this.input_alert_1 = false;
-                                this.input_alert_2 = false;
-                                this.input_alert_3 = false;
-                                this.input_alert_4 = false;
-                            }
-                            else {
-                                this.input_alert_4 = true;
-                            }
+                            xmlhttp.onerror = function (e) {
+                                alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                                comp.submitting_report2 = false;
+                            };
+
+                            xmlhttp.send(dataString);
+                            
+                            this.input_alert_1 = false;
+                            this.input_alert_2 = false;
+                            this.input_alert_3 = false;
                         }
                         else {
                             this.input_alert_3 = true;
@@ -476,7 +458,7 @@
                     }
                     else {
                         this.input_alert_2 = true;
-                    }  
+                    }
                 } 
                 else {
                     this.input_alert_1 = true;

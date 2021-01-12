@@ -103,7 +103,7 @@
                             </v-row>
                         </v-col>
                     </v-row>
-                    <v-row justify="center" style="background-color: #2b3335; min-height: 600px;">
+                    <v-row v-if="!logged_in" justify="center" style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="11" xs="11" sm="7" md="5" lg="3"xl="3">
                             <v-card dark :loading="login_in_progress" class="mt-16 mb-16">
                                 <v-alert v-model="input_alert_1" type="error">
@@ -122,13 +122,20 @@
                                 <v-divider></v-divider>
                                 <v-container>
                                     <v-text-field v-model="input_user_email" label="Email"></v-text-field>
-                                    <v-text-field v-model="input_user_password" label="Hasło"></v-text-field>
+                                    <v-text-field v-model="input_user_password" label="Hasło" type="password"></v-text-field>
                                 </v-container>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
                                     <v-btn color="blue darken-1" text @click="LogIn()">Zaloguj</v-btn>
                                 </v-card-actions>
                             </v-card>
+                        </v-col>
+                    </v-row>
+                    <v-row v-else justify="center" style="background-color: #2b3335; min-height: 600px;">
+                        <v-col cols="12">
+                            <v-container>
+                                <p style="color: white;">Jesteś już zalogowany.</p>
+                            </v-container>
                         </v-col>
                     </v-row>
                 </v-main>
@@ -219,7 +226,7 @@
                                     localStorage.setItem('user_email', response.user_email);
                                     console.log("Zapisane logged_in: ", localStorage.getItem('logged_in'));
                                     console.log("Zapisane user_email: ", localStorage.getItem('user_email'));
-                                    //window.location.replace('../frontend/projects.html');
+                                    window.location.replace('../frontend/projects.html');
                                 }
                                 comp.login_in_progress = false;
                             }
