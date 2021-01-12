@@ -15,7 +15,7 @@
         if ($row == NULL) {
             $connection = connect_db();
             $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $topic = "'".$data->topic."'";
+            $topic = $data->topic;
             $description = "Brak opisu.";
             $technologies = "Brak wybranych technologii.";
             $blocked = "1";
