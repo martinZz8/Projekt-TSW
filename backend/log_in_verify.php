@@ -1,5 +1,4 @@
 <?php
-//zwrócić: login_status, user_email, error
     include 'connect_db.php';
     $dataJSON = file_get_contents("php://input");
     $data = json_decode($dataJSON);
@@ -27,7 +26,7 @@
                 $json = array(
                     "login_status" => 'false',
                     "user_email" => $data->user_email,
-                    "error" => 'Podano błędne dane logowania (1).'
+                    "error" => 'Podano błędne dane logowania.'
                 );
             }
         }
@@ -54,7 +53,7 @@
                     $json = array(
                         "login_status" => 'false',
                         "user_email" => $data->user_email,
-                        "error" => 'Podano błędne dane logowania (2).'
+                        "error" => 'Podano błędne dane logowania.'
                     );
                 }
             }
@@ -62,7 +61,7 @@
                 $json = array(
                     "login_status" => 'false',
                     "user_email" => $data->user_email,
-                    "error" => 'Podano błędne dane logowania (3).'
+                    "error" => 'Podano błędne dane logowania.'
                 );
             }
         }

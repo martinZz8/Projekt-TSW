@@ -121,8 +121,8 @@
                                 <v-card-title class="headline">Podaj dane logowania</v-card-title>
                                 <v-divider></v-divider>
                                 <v-container>
-                                    <v-text-field v-model="user_email" label="Email"></v-text-field>
-                                    <v-text-field v-model="user_password" label="Hasło"></v-text-field>
+                                    <v-text-field v-model="input_user_email" label="Email"></v-text-field>
+                                    <v-text-field v-model="input_user_password" label="Hasło"></v-text-field>
                                 </v-container>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
@@ -168,7 +168,8 @@
             group: null,
             logged_in: false,
             user_email: '',
-            user_password: '',
+            input_user_email: '',
+            input_user_password: '',
             login_in_progress: false,
             input_alert_1: false,
             input_alert_2: false,
@@ -177,20 +178,20 @@
 
         },
         mounted: function() {
-            if (localStorage.getItem('logged_in') == true && localStorage.getItem('user_email')) {
+            if (localStorage.getItem('logged_in') == 'true' && localStorage.getItem('user_email')) {
                 this.logged_in = localStorage.getItem('logged_in');
                 this.user_email = localStorage.getItem('user_email');
             }
         },
         methods: {
             LogIn() {
-                if (this.user_password != '') {
+                if (this.input_user_password != '') {
                     const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-                    if (re.test(String(this.user_email).toLowerCase())) {
+                    if (re.test(String(this.input_user_email).toLowerCase())) {
                         let comp = this;
                         let data = {
-                            user_email: comp.user_email,
-                            user_password: comp.user_password,
+                            user_email: comp.input_user_email,
+                            user_password: comp.input_user_password,
                         };
 
                         let dataString = JSON.stringify(data);
@@ -216,6 +217,8 @@
                                     console.log("Zalogowano ");
                                     localStorage.setItem('logged_in', true);
                                     localStorage.setItem('user_email', response.user_email);
+                                    console.log("Zapisane logged_in: ", localStorage.getItem('logged_in'));
+                                    console.log("Zapisane user_email: ", localStorage.getItem('user_email'));
                                     //window.location.replace('../frontend/projects.html');
                                 }
                                 comp.login_in_progress = false;
