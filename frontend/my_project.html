@@ -119,6 +119,14 @@
                         <v-col cols="12" class="mt-16 mb-16">
                             <v-container>
                                 <v-card dark>
+                                    <v-alert v-model="success_leaving_raport" type="success">
+                                        Pomyślnie zrezygnowano z projektu.
+                                        <v-btn rounded color="black" text @click="success_leaving_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_leaving_raport" type="error">
+                                        Nie udało się zrezygnować z projektu. {{failure_leaving_message}}
+                                        <v-btn rounded color="black" text @click="failure_leaving_raport=false">OK</v-btn>
+                                    </v-alert>
                                     <v-card-title>
                                         Twój projekt
                                     </v-card-title>
@@ -134,7 +142,7 @@
                                             <td>{{row.item.description}}</td>
                                             <td>{{row.item.technologies}}</td>
                                             <td>
-                                                <v-btn class="mx-2" small color="#ff726f" @click="ShowLeaveDialog(row.item)">Zrezygnuj</v-btn>
+                                                <v-btn class="mx-2" small color="#ff726f" @click="leave_dialog = true">Zrezygnuj</v-btn>
                                             </td>
                                         </tr>
                                     </template>
@@ -146,7 +154,7 @@
                                         <v-divider></v-divider>
                                         <v-card-actions>
                                             <v-spacer></v-spacer>
-                                            <v-btn color="red darken-1" @click="leave_dialog=false, selected_project_id=''">Nie</v-btn>
+                                            <v-btn color="red darken-1" @click="leave_dialog=false">Nie</v-btn>
                                             <v-btn color="green darken-1" @click="LeaveProject()">Tak</v-btn>
                                         </v-card-actions>
                                     </v-card>
@@ -212,9 +220,11 @@
             ],
             my_project: [],
             project_loading: false,
-            selected_project_id: null,
             leave_dialog: false,
             submitting_leaving: false,
+            failure_leaving_message: '',
+            failure_leaving_raport: false,
+            success_leaving_raport: false,
 
         },
         mounted: function() {
@@ -236,10 +246,6 @@
                     localStorage.removeItem('user_email');
                 }
                 window.location.replace('../frontend/index.html');
-            },
-            ShowLeaveDialog(item) {
-                this.leave_dialog = true;
-                this.selected_project_id = item.id;
             },
             DownloadMyProject() {
                 let comp = this;
@@ -276,7 +282,47 @@
                 xmlhttp.send(dataString);
             },
             LeaveProject() {
+                let comp = this;
+                let data = {
+                    email: comp.user_email,
+                };
+                let dataString = JSON.stringify(data);
+                console.log("Dane: ", dataString);             
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("POST", "../backend/leave_project.php");
+                xmlhttp.setRequestHeader("Content-Type", "application/json");
                 
+                xmlhttp.onprogress = function () {
+                    comp.submitting_leaving = true;
+                };
+
+                xmlhttp.onload = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        comp.failure_leaving_message = this.responseText;
+                        console.log("Zwrot: ", comp.failure_leaving_message);
+                        if (comp.failure_leaving_message != '') {
+                            comp.failure_leaving_raport = true;
+                            comp.leave_dialog = false;
+                        }
+                        else {
+                            comp.my_project = [];
+                            comp.success_leaving_raport = true;
+                            comp.leave_dialog = false;
+                        }
+                        comp.submitting_leaving = false;
+                    }
+                    else if (this.status == 0) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                        comp.submitting_leaving = false;
+                    }
+                };
+
+                xmlhttp.onerror = function (e) {
+                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                    comp.submitting_leaving = false;
+                };
+                
+                xmlhttp.send(dataString);
             }
         }
     });
