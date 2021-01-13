@@ -110,14 +110,14 @@
                         <v-col clos="12">
                             <v-row justify="center" style="padding-top: 200px;">
                                 <v-col cols="auto" class="box_shadow">
-                                    <h1>Zaloguj się</h1>
+                                    <h1>Zarejestruj konto</h1>
                                 </v-col>
                             </v-row>
                         </v-col>
                     </v-row>
                     <v-row v-if="!logged_in" justify="center" style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="11" xs="11" sm="7" md="5" lg="3"xl="3">
-                            <v-card dark :loading="login_in_progress" class="mt-16 mb-16">
+                            <v-card dark :loading="register_in_progress" class="mt-16 mb-16">
                                 <v-alert v-model="input_alert_1" type="error">
                                     Podaj hasło.
                                     <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
@@ -126,19 +126,28 @@
                                     Podaj właściwy adres email.
                                     <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
                                 </v-alert>
-                                <v-alert v-model="login_failure" type="error">
-                                    Nie udało się zalogować. {{failure_message}}
-                                    <v-btn rounded color="black" text @click="login_failure=false">OK</v-btn>
+                                <v-alert v-model="input_alert_3" type="error">
+                                    Wymagane jest wyrażenie zgody na przetwarzanie podanych informacji.
+                                    <v-btn rounded color="black" text @click="input_alert_3=false">OK</v-btn>
                                 </v-alert>
-                                <v-card-title class="headline">Podaj dane logowania</v-card-title>
+                                <v-alert v-model="register_failure" type="error">
+                                    Nie udało się zarejestrować konta. {{failure_message}}
+                                    <v-btn rounded color="black" text @click="register_failure=false">OK</v-btn>
+                                </v-alert>
+                                <v-alert v-model="register_success" type="success">
+                                    Pomyślnie zarejestrowano konto. Musisz jeszcze poczekać na akceptację konta przez administratora przed zalogowaniem się.
+                                    <v-btn rounded color="black" text @click="register_success=false">OK</v-btn>
+                                </v-alert>
+                                <v-card-title class="headline">Podaj dane do rejestracji</v-card-title>
                                 <v-divider></v-divider>
                                 <v-container>
                                     <v-text-field v-model="input_user_email" label="Email"></v-text-field>
                                     <v-text-field v-model="input_user_password" label="Hasło" type="password"></v-text-field>
+                                    <v-checkbox v-model="agree_checkbox" :label="'Wyrażam zgodę na przetwarzanie podanych przeze mnie danych w celu rejestracji konta na tej witrynie.'"></v-checkbox>
                                 </v-container>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="LogIn()">Zaloguj</v-btn>
+                                    <v-btn color="blue darken-1" text @click="RegisterAccount()">Zarejestruj konto</v-btn>
                                 </v-card-actions>
                             </v-card>
                         </v-col>
@@ -146,7 +155,7 @@
                     <v-row v-else justify="center" style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="12">
                             <v-container>
-                                <p style="color: white;">Jesteś już zalogowany.</p>
+                                <p style="color: white;">Jesteś już zarejestrowany i zalogowany.</p>
                             </v-container>
                         </v-col>
                     </v-row>
@@ -189,11 +198,14 @@
             user_email: '',
             input_user_email: '',
             input_user_password: '',
-            login_in_progress: false,
+            register_in_progress: false,
             input_alert_1: false,
             input_alert_2: false,
-            login_failure: false,
+            input_alert_3: false,
+            register_failure: false,
+            register_success: false,
             failure_message: '',
+            agree_checkbox: false,
 
         },
         mounted: function() {
@@ -203,61 +215,60 @@
             }
         },
         methods: {
-            LogIn() {
+            RegisterAccount() {
                 if (this.input_user_password != '') {
                     const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
                     if (re.test(String(this.input_user_email).toLowerCase())) {
-                        let comp = this;
-                        let data = {
-                            user_email: comp.input_user_email,
-                            user_password: comp.input_user_password,
-                        };
+                        if (this.agree_checkbox) {
+                            let comp = this;
+                            let data = {
+                                user_email: comp.input_user_email,
+                                user_password: comp.input_user_password,
+                            };
 
-                        let dataString = JSON.stringify(data);
-                        console.log("Dane: ", dataString);
-                        let xmlhttp = new XMLHttpRequest();
-                        xmlhttp.open("POST", "../backend/log_in_verify.php");
-                        xmlhttp.setRequestHeader("Content-Type", "application/json");
-                        
-                        xmlhttp.onprogress = function () {
-                            comp.login_in_progress = true;
-                        };
+                            let dataString = JSON.stringify(data);
+                            console.log("Dane: ", dataString);
+                            let xmlhttp = new XMLHttpRequest();
+                            xmlhttp.open("POST", "../backend/register_user.php");
+                            xmlhttp.setRequestHeader("Content-Type", "application/json");
+                            
+                            xmlhttp.onprogress = function () {
+                                comp.register_in_progress = true;
+                            };
 
-                        xmlhttp.onload = function () {
-                            if (this.readyState == 4 && this.status == 200) {
-                                let response = JSON.parse(this.responseText);
-                                console.log("Zwrot loginu: ", response);
-                                let login_status = response.login_status;
-                                if (login_status == 'false') {
-                                    comp.failure_message = response.error;
-                                    comp.login_failure = true;
+                            xmlhttp.onload = function () {
+                                if (this.readyState == 4 && this.status == 200) {
+                                    comp.failure_message = this.responseText;
+                                    console.log("Zwrot: ", comp.failure_message);
+                                    if (comp.failure_message != '') {
+                                        comp.register_failure = true;
+                                    }
+                                    else {
+                                        console.log("Zarejestrowano konto");
+                                        comp.register_success = true;
+                                    }
+                                    comp.register_in_progress = false;      
                                 }
-                                else {
-                                    console.log("Zalogowano ");
-                                    localStorage.setItem('logged_in', true);
-                                    localStorage.setItem('user_email', response.user_email);
-                                    console.log("Zapisane logged_in: ", localStorage.getItem('logged_in'));
-                                    console.log("Zapisane user_email: ", localStorage.getItem('user_email'));
-                                    window.location.replace('../frontend/projects.html');
+                                else if (this.status == 0) {
+                                    alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                    comp.register_in_progress = false;
                                 }
-                                comp.login_in_progress = false;
-                            }
-                            else if (this.status == 0) {
-                                alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
-                                comp.login_in_progress = false;
-                            }
-                        };
+                            };
 
-                        xmlhttp.onerror = function (e) {
-                            alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
-                            comp.login_in_progress = false;
-                        };
+                            xmlhttp.onerror = function (e) {
+                                alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                                comp.register_in_progress = false;
+                            };
 
-                        xmlhttp.send(dataString);
-                        
-                        this.input_alert_1 = false;
-                        this.input_alert_2 = false;
-                        
+                            xmlhttp.send(dataString);
+                            
+                            this.input_alert_1 = false;
+                            this.input_alert_2 = false;
+                            this.input_alert_3 = false;
+                        }
+                        else {
+                            this.input_alert_3 = true;
+                        } 
                     }
                     else {
                         this.input_alert_2 = true;

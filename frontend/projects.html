@@ -48,6 +48,10 @@
                                 <v-list-item-icon><v-icon>mdi-console-line</v-icon></v-list-item-icon>
                                 <v-list-item-title>Projekty</v-list-item-title>
                             </v-list-item>
+                            <v-list-item v-if="logged_in" href="../frontend/my_project.html">
+                                <v-list-item-icon><v-icon>mdi-lead-pencil</v-icon></v-list-item-icon>
+                                <v-list-item-title>Mój projekt</v-list-item-title>
+                            </v-list-item>
                             <v-list-item href="../frontend/contact.html">
                                 <v-list-item-icon><v-icon>mdi-email</v-icon></v-list-item-icon>
                                 <v-list-item-title>Kontakt</v-list-item-title>
@@ -55,6 +59,10 @@
                             <v-list-item v-if="!logged_in" href="../frontend/login.html">
                                 <v-list-item-icon><v-icon>mdi-login</v-icon></v-list-item-icon>
                                 <v-list-item-title>Zaloguj się!</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="!logged_in" href="../frontend/register.html">
+                                <v-list-item-icon><v-icon>mdi-account-plus</v-icon></v-list-item-icon>
+                                <v-list-item-title>Zarejestruj się!</v-list-item-title>
                             </v-list-item>
                             <v-list-item v-else @click="LogOut()">
                                 <v-list-item-icon><v-icon>mdi-logout</v-icon></v-list-item-icon>
@@ -72,11 +80,15 @@
                         <li>
                             <a class="menu_list active" href="../frontend/projects.html">Projekty</a>
                         </li>
+                        <li v-if="logged_in">
+                            <a class="menu_list" href="../frontend/my_project.html">Mój projekt</a>
+                        </li>
                         <li>
                             <a class="menu_list" href="../frontend/contact.html">Kontakt</a>
                         </li>
                         <li v-if="!logged_in">
-                            <v-btn outlined elevation="3" large class="mt-2 ml-10 login" href="../frontend/login.html">Zaloguj się!</v-btn>
+                            <v-btn outlined elevation="3" large class="mt-2 ml-5 login" href="../frontend/login.html">Zaloguj się!</v-btn>
+                            <v-btn outlined elevation="3" large class="mt-2 ml-2 register" href="../frontend/register.html">Zarejestruj się!</v-btn>
                         </li>
                         <li v-else>
                             <v-row justify="center">
