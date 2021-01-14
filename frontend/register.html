@@ -116,7 +116,7 @@
                         </v-col>
                     </v-row>
                     <v-row v-if="!logged_in" justify="center" style="background-color: #2b3335; min-height: 600px;">
-                        <v-col cols="11" xs="11" sm="7" md="5" lg="3"xl="3">
+                        <v-col cols="11" xs="11" sm="7" md="6" lg="4"xl="3">
                             <v-card dark :loading="register_in_progress" class="mt-16 mb-16">
                                 <v-alert v-model="input_alert_1" type="error">
                                     Podaj hasło.
@@ -143,7 +143,7 @@
                                 <v-container>
                                     <v-text-field v-model="input_user_email" label="Email"></v-text-field>
                                     <v-text-field v-model="input_user_password" label="Hasło" type="password"></v-text-field>
-                                    <v-checkbox v-model="agree_checkbox" :label="'Wyrażam zgodę na przetwarzanie podanych przeze mnie danych w celu rejestracji konta na tej witrynie.'"></v-checkbox>
+                                    <v-checkbox v-model="agree_checkbox" color="green" :error="error_checkbox" @click="error_checkbox = false" :label="'Wyrażam zgodę na przetwarzanie podanych przeze mnie danych w celu rejestracji konta na tej witrynie.'"></v-checkbox>
                                 </v-container>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
@@ -206,6 +206,7 @@
             register_success: false,
             failure_message: '',
             agree_checkbox: false,
+            error_checkbox: false,
 
         },
         mounted: function() {
@@ -267,6 +268,7 @@
                             this.input_alert_3 = false;
                         }
                         else {
+                            this.error_checkbox = true;
                             this.input_alert_3 = true;
                         } 
                     }

@@ -116,7 +116,7 @@
                         </v-col>
                     </v-row>
                     <v-row v-if="!logged_in" justify="center" style="background-color: #2b3335; min-height: 600px;">
-                        <v-col cols="11" xs="11" sm="7" md="5" lg="3"xl="3">
+                        <v-col cols="11" xs="11" sm="8" md="5" lg="4"xl="3">
                             <v-card dark :loading="login_in_progress" class="mt-16 mb-16">
                                 <v-alert v-model="input_alert_1" type="error">
                                     Podaj hasło.
@@ -137,6 +137,7 @@
                                     <v-text-field v-model="input_user_password" label="Hasło" type="password"></v-text-field>
                                 </v-container>
                                 <v-card-actions>
+                                    <p style="margin-bottom: 0px; margin-left: 8px;">Nie masz konta? <a href="../frontend/register.html">Zarejestruj się!</a></p>
                                     <v-spacer></v-spacer>
                                     <v-btn color="blue darken-1" text @click="LogIn()">Zaloguj</v-btn>
                                 </v-card-actions>

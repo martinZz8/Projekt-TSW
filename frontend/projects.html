@@ -120,11 +120,11 @@
                             <v-container>
                                 <v-card dark>
                                     <v-alert v-model="success_raport1" type="success">
-                                        Pomyślnie wybrano projekt.
+                                        Pomyślnie wybrano projekt. Wybrany projekt możesz zobaczyć w zakładce "Mój projekt".
                                         <v-btn rounded color="black" text @click="success_raport1=false">OK</v-btn>
                                     </v-alert>
                                     <v-alert v-model="success_raport2" type="success">
-                                        Pomyślnie przesłano i wybrano projekt.
+                                        Pomyślnie przesłano i wybrano projekt. Wybrany projekt możesz zobaczyć w zakładce "Mój projekt".
                                         <v-btn rounded color="black" text @click="success_raport2=false">OK</v-btn>
                                     </v-alert>
                                     <v-alert v-model="failure_raport" type="error">
@@ -223,6 +223,7 @@
                             <v-container>
                                 <p style="color: white;">Nie masz dostępu do tej treści.</p>
                                 <p style="color: white;"><a href="../frontend/login.html">Zaloguj się</a> aby uzyskać dostęp do zawartości.</p>
+                                <p style="color: white;">Nie masz konta? <a href="../frontend/register.html">Zarejestruj się!</a></p>
                             </v-container>
                         </v-col>
                     </v-row>
