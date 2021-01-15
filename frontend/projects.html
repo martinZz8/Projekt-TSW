@@ -330,7 +330,7 @@
                         console.log("Zwrot: ", comp.projects);
                         comp.projects_loading = false;
                     }
-                    else if (this.status == 0) {
+                    else if (this.readyState == 4 && this.status == 0) {
                         alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
                         comp.projects_loading = false;
                     }
@@ -391,7 +391,7 @@
                             }
                             comp.submitting_report1 = false;
                         }
-                        else if (this.status == 0) {
+                        else if (this.readyState == 4 && this.status == 0) {
                             alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
                             comp.submitting_report1 = false;
                         }
@@ -448,7 +448,7 @@
                                     }
                                     comp.submitting_report2 = false;
                                 }
-                                else if (this.status == 0) {
+                                else if (this.readyState == 4 && this.status == 0) {
                                     alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
                                     comp.submitting_report2 = false;
                                 }

@@ -269,7 +269,7 @@
                         console.log("Zwrot: ", comp.my_project);
                         comp.project_loading = false;
                     }
-                    else if (this.status == 0) {
+                    else if (this.readyState == 4 && this.status == 0) {
                         alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
                         comp.project_loading = false;
                     }
@@ -312,7 +312,7 @@
                         }
                         comp.submitting_leaving = false;
                     }
-                    else if (this.status == 0) {
+                    else if (this.readyState == 4 && this.status == 0) {
                         alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
                         comp.submitting_leaving = false;
                     }

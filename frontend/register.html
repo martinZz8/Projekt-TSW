@@ -130,6 +130,10 @@
                                     Wymagane jest wyrażenie zgody na przetwarzanie podanych informacji.
                                     <v-btn rounded color="black" text @click="input_alert_3=false">OK</v-btn>
                                 </v-alert>
+                                <v-alert v-model="input_alert_4" type="error">
+                                    Powtórzone hasło jest błędne.
+                                    <v-btn rounded color="black" text @click="input_alert_4=false">OK</v-btn>
+                                </v-alert>
                                 <v-alert v-model="register_failure" type="error">
                                     Nie udało się zarejestrować konta. {{failure_message}}
                                     <v-btn rounded color="black" text @click="register_failure=false">OK</v-btn>
@@ -143,6 +147,7 @@
                                 <v-container>
                                     <v-text-field v-model="input_user_email" label="Email"></v-text-field>
                                     <v-text-field v-model="input_user_password" label="Hasło" type="password"></v-text-field>
+                                    <v-text-field v-model="input_user_password2" label="Powtórzone hasło" type="password"></v-text-field>
                                     <v-checkbox v-model="agree_checkbox" color="green" :error="error_checkbox" @click="error_checkbox = false" :label="'Wyrażam zgodę na przetwarzanie podanych przeze mnie danych w celu rejestracji konta na tej witrynie.'"></v-checkbox>
                                 </v-container>
                                 <v-card-actions>
@@ -198,10 +203,12 @@
             user_email: '',
             input_user_email: '',
             input_user_password: '',
+            input_user_password2: '',
             register_in_progress: false,
             input_alert_1: false,
             input_alert_2: false,
             input_alert_3: false,
+            input_alert_4: false,
             register_failure: false,
             register_success: false,
             failure_message: '',
@@ -220,57 +227,63 @@
                 if (this.input_user_password != '') {
                     const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
                     if (re.test(String(this.input_user_email).toLowerCase())) {
-                        if (this.agree_checkbox) {
-                            let comp = this;
-                            let data = {
-                                user_email: comp.input_user_email,
-                                user_password: comp.input_user_password,
-                            };
+                        if (this.input_user_password === this.input_user_password2) {
+                            if (this.agree_checkbox) {
+                                let comp = this;
+                                let data = {
+                                    user_email: comp.input_user_email,
+                                    user_password: comp.input_user_password,
+                                };
 
-                            let dataString = JSON.stringify(data);
-                            console.log("Dane: ", dataString);
-                            let xmlhttp = new XMLHttpRequest();
-                            xmlhttp.open("POST", "../backend/register_user.php");
-                            xmlhttp.setRequestHeader("Content-Type", "application/json");
-                            
-                            xmlhttp.onprogress = function () {
-                                comp.register_in_progress = true;
-                            };
+                                let dataString = JSON.stringify(data);
+                                console.log("Dane: ", dataString);
+                                let xmlhttp = new XMLHttpRequest();
+                                xmlhttp.open("POST", "../backend/register_user.php");
+                                xmlhttp.setRequestHeader("Content-Type", "application/json");
+                                
+                                xmlhttp.onprogress = function () {
+                                    comp.register_in_progress = true;
+                                };
 
-                            xmlhttp.onload = function () {
-                                if (this.readyState == 4 && this.status == 200) {
-                                    comp.failure_message = this.responseText;
-                                    console.log("Zwrot: ", comp.failure_message);
-                                    if (comp.failure_message != '') {
-                                        comp.register_failure = true;
+                                xmlhttp.onload = function () {
+                                    if (this.readyState == 4 && this.status == 200) {
+                                        comp.failure_message = this.responseText;
+                                        console.log("Zwrot: ", comp.failure_message);
+                                        if (comp.failure_message != '') {
+                                            comp.register_failure = true;
+                                        }
+                                        else {
+                                            console.log("Zarejestrowano konto");
+                                            comp.register_success = true;
+                                        }
+                                        comp.register_in_progress = false;      
                                     }
-                                    else {
-                                        console.log("Zarejestrowano konto");
-                                        comp.register_success = true;
+                                    else if (this.readyState == 4 && this.status == 0) {
+                                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                        comp.register_in_progress = false;
                                     }
-                                    comp.register_in_progress = false;      
-                                }
-                                else if (this.status == 0) {
-                                    alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                };
+
+                                xmlhttp.onerror = function (e) {
+                                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
                                     comp.register_in_progress = false;
-                                }
-                            };
+                                };
 
-                            xmlhttp.onerror = function (e) {
-                                alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
-                                comp.register_in_progress = false;
-                            };
-
-                            xmlhttp.send(dataString);
-                            
-                            this.input_alert_1 = false;
-                            this.input_alert_2 = false;
-                            this.input_alert_3 = false;
+                                xmlhttp.send(dataString);
+                                
+                                this.input_alert_1 = false;
+                                this.input_alert_2 = false;
+                                this.input_alert_3 = false;
+                                this.input_alert_4 = false;
+                            }
+                            else {
+                                this.error_checkbox = true;
+                                this.input_alert_3 = true;
+                            }
                         }
                         else {
-                            this.error_checkbox = true;
-                            this.input_alert_3 = true;
-                        } 
+                            this.input_alert_4 = true;
+                        }
                     }
                     else {
                         this.input_alert_2 = true;
