@@ -117,7 +117,7 @@
                         <v-col clos="12">
                             <v-row justify="center" style="padding-top: 200px;">
                                 <v-col cols="auto" class="box_shadow">
-                                    <h1>Zarządzaj projektami</h1>
+                                    <h1>Panel zarządzania projektami</h1>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -169,7 +169,7 @@
                                             <td>{{row.item.description}}</td>
                                             <td>{{row.item.technologies}}</td>
                                             <td title="0-niezablokowany, 1-zablokowany">{{row.item.blocked}}</td>
-                                            <td><v-icon title="Modyfikuj projekt" @click="ShowModifyForm(row.item)">mdi-pencil</v-icon></td>
+                                            <td><v-icon title="Edytuj projekt" @click="ShowModifyForm(row.item)">mdi-pencil</v-icon></td>
                                             <td><v-icon title="Usuń projekt" @click="ShowDeleteForm(row.item)">mdi-delete</v-icon></td>
                                         </tr>
                                     </template>
@@ -226,7 +226,7 @@
                 <v-footer dark padless>
                     <v-card class="flex" flat tile>
                         <v-card-title style="background-color: rgb(5,12,15);">
-                            <strong class="subheading">Strony systemu rezerwacji projektów: </strong>
+                            <strong class="subheading">Strony systemu rezerwacji projektów TSW:</strong>
                             <a href="../../frontend/index.html" style="margin: 0px 6px 0px 6px;">Strona główna</a>
                             <a href="../../frontend/projects.html" style="margin: 0px 6px 0px 6px;">Projekty</a>
                             <a href="../../frontend/my_projects.html" style="margin: 0px 6px 0px 6px;">Moje projekty</a>
