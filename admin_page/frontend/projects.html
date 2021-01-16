@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+    <head>
+        <title>Panel administracyjny systemu rezerwacji projektów TSW</title>
+        <meta charset="utf-8">
+        <meta name="keywords" content="System rezerwacji projektów, System reservation, TSW, PRZ, Projekty TSW">
+        <meta name="description" content="Strona rezerwacji projektów z przedmiotu TSW - Politechnika Rzeszowska">
+        <meta name="title" content="System rezerwacji projektów TSW">
+        <link rel="shortcut icon" href="../../static/favicon.ico">
+        <link rel="stylesheet" type="text/css" href="../../styles/admin_style.css">
+        <!--Start: Vue + Vuetify-->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+        <!--End: Vue + Vuetify-->
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>-->
+        <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+        <div id="app">
+            <v-app>
+                <v-app-bar app color="#1750caed" class="app_bar" id="hamburger_menu">
+                    <v-icon>mdi-console</v-icon>
+                    <v-spacer></v-spacer>
+                    <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+                </v-app-bar>
+                <v-navigation-drawer dark v-model="drawer" temporary fixed>
+                    <v-list nav dense>
+                        <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
+                            <v-list-item style="cursor: default;">
+                                <v-list-item-title style="text-align: center; font-weight: 700; font-size: 18px;">Panel administratora</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="admin_logged_in" style="cursor: default;">
+                                <v-list-item-icon><v-icon>mdi-account</v-icon></v-list-item-icon>
+                                <v-list-item-title>Zalogowany jako:</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="admin_logged_in" style="cursor: default;">
+                                <v-list-item-title style="text-align: center;">{{admin_email}}</v-list-item-title>
+                            </v-list-item>
+                            <v-divider></v-divider>
+                            <v-list-item v-if="admin_logged_in" href="../frontend/projects.html">
+                                <v-list-item-icon><v-icon>mdi-console-line</v-icon></v-list-item-icon>
+                                <v-list-item-title>Projekty</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="admin_logged_in" href="../frontend/applications.html">
+                                <v-list-item-icon><v-icon>mdi-lead-pencil</v-icon></v-list-item-icon>
+                                <v-list-item-title>Zgłoszenia</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="admin_logged_in" href="../frontend/users.html">
+                                <v-list-item-icon><v-icon>mdi-account-group</v-icon></v-list-item-icon>
+                                <v-list-item-title>Użytkownicy</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="!admin_logged_in" href="../frontend/login.html">
+                                <v-list-item-icon><v-icon>mdi-login</v-icon></v-list-item-icon>
+                                <v-list-item-title>Zaloguj się!</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-else @click="LogOut()">
+                                <v-list-item-icon><v-icon>mdi-logout</v-icon></v-list-item-icon>
+                                <v-list-item-title>Wyloguj się</v-list-item-title>
+                            </v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-navigation-drawer>
+                
+                <v-app-bar app color="#1750caed" class="app_bar" id="normal_menu">
+                    <v-icon>mdi-console</v-icon>
+                    <v-row justify="start" class="ml-2">
+                        <v-col cols="auto">
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pb-1 pl-0 pr-0 pt-0">
+                                    <p style="margin: 0; font-weight: 500;">Panel</p>
+                                </v-col>
+                            </v-row>
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pb-0 pl-0 pr-0 pt-1">
+                                    <p style="margin: 0; font-weight: 500;">administracyjny</p>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
+                    <v-spacer></v-spacer>
+                    <ul class="menu_list">
+                        <li v-if="admin_logged_in">
+                            <a class="menu_list active" href="../frontend/projects.html">Projekty</a>
+                        </li>
+                        <li v-if="admin_logged_in">
+                            <a class="menu_list" href="../frontend/applications.html">Zgłoszenia</a>
+                        </li>
+                        <li v-if="admin_logged_in">
+                            <a class="menu_list" href="../frontend/users.html">Użytkownicy</a>
+                        </li>
+                        <li v-if="!admin_logged_in">
+                            <v-btn outlined elevation="3" large class="mt-2 ml-5 login" href="../frontend/login.html">Zaloguj się!</v-btn>
+                        </li>
+                        <li v-else>
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pt-3 pb-0">
+                                    <p style="margin: 0;">{{admin_email}}</p>
+                                </v-col>
+                            </v-row>
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pt-2 pb-0">
+                                    <v-btn outlined elevation="3" small class="logout" @click="LogOut()">Wyloguj się</v-btn>
+                                </v-col>
+                            </v-row>
+                        </li>
+                    </ul>
+                </v-app-bar>
+
+                <v-main class="pa-0">
+                    <v-row id="bg_img_1" style="height: 400px;">
+                        <v-col clos="12">
+                            <v-row justify="center" style="padding-top: 200px;">
+                                <v-col cols="auto" class="box_shadow">
+                                    <h1>Zarządzaj projektami</h1>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
+                    <v-row v-if="admin_logged_in" style="background-color: #2b3335; min-height: 600px;">
+                        <v-col cols="12" class="mt-16 mb-16">
+                            <v-container>
+                                <v-card dark>
+                                    <v-alert v-model="success_project_add_raport" type="success">
+                                        Pomyślnie dodano projekt.
+                                        <v-btn rounded color="black" text @click="success_project_add_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_project_add_raport" type="error">
+                                        Nie udało się dodać projektu. {{failure_project_add_message}}
+                                        <v-btn rounded color="black" text @click="failure_project_add_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-card-title>
+                                        Lista projektów
+                                        <v-spacer></v-spacer>
+                                        <v-text-field
+                                          v-model="search"
+                                          append-icon="mdi-magnify"
+                                          label="Szukaj"
+                                          single-line
+                                          hide-details
+                                        ></v-text-field>
+                                        <v-btn color="green" class="smartphone_block" @click="ShowAddForm()">Dodaj projekt</v-btn>
+                                    </v-card-title>
+                                    <v-data-table
+                                      :headers="headers"
+                                      :items="projects"
+                                      :search="search"
+                                      :items-per-page="-1"
+                                      :loading="projects_loading"
+                                      no-data-text="Brak tematów do wyświetlenia"
+                                    >
+                                    <template v-slot:item="row">
+                                        <tr>
+                                            <td>{{row.item.id}}</td>
+                                            <td>{{row.item.topic}}</td>
+                                            <td>{{row.item.description}}</td>
+                                            <td>{{row.item.technologies}}</td>
+                                            <td title="0-niezablokowany, 1-zablokowany">{{row.item.blocked}}</td>
+                                            <td><v-icon title="Modyfikuj projekt" @click="ShowModifyForm(row.item)">mdi-pencil</v-icon></td>
+                                            <td><v-icon title="Usuń projekt" @click="ShowDeleteForm(row.item)">mdi-delete</v-icon></td>
+                                        </tr>
+                                    </template>
+                                    </v-data-table>
+                                </v-card>
+                                <v-dialog :loading="adding_project" dark v-model="add_project_dialog" max-width="500px">
+                                    <v-card>
+                                        <v-alert v-model="add_input_alert_1" type="error">
+                                            Podaj temat.
+                                            <v-btn rounded color="black" text @click="add_input_alert_1=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-alert v-model="add_input_alert_2" type="error">
+                                            Podaj krótszy temat projektu (maksymalnie 300 znaków).
+                                            <v-btn rounded color="black" text @click="add_input_alert_2=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-card-title class="headline">Podaj dane projektu</v-card-title>
+                                        <v-divider></v-divider>
+                                        <v-container>
+                                            <v-textarea rows="1" auto-grow counter :rules="[v => v.length <= 300 || 'Maksymalnie 300 znaków']" v-model="add_p_title" label="Temat"></v-textarea>
+                                            <v-textarea rows="3" auto-grow counter v-model="add_p_description" label="Opis projektu"></v-textarea>
+                                            <v-textarea rows="1" auto-grow counter v-model="add_p_technologies" label="Technologie"></v-textarea>
+                                            <v-select class="mt-3" :items="p_blocked_list" v-model="add_p_blocked" label="Blokada (0-niezablokowany, 1-zablokowany)"></v-select>
+                                        </v-container>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="blue darken-1" text @click="add_project_dialog=false">Wróć</v-btn>
+                                            <v-btn color="blue darken-1" text @click="AddProject()">Prześlij projekt</v-btn>
+                                        </v-card-actions>
+                                      </v-card>
+                                </v-dialog>
+                            </v-container>
+                        </v-col>
+                    </v-row>
+                    <v-row v-else justify="center" style="background-color: #2b3335; min-height: 600px;">
+                        <v-col cols="12">
+                            <v-container>
+                                <p style="color: white;">Nie masz dostępu do tej treści.</p>
+                                <p style="color: white;"><a href="../frontend/login.html">Zaloguj się</a> aby uzyskać dostęp do zawartości.</p>
+                            </v-container>
+                        </v-col>
+                    </v-row>
+                </v-main>
+                <v-footer dark padless>
+                    <v-card class="flex" flat tile>
+                        <v-card-title style="background-color: rgb(5,12,15);">
+                            <strong class="subheading">Strony systemu rezerwacji projektów: </strong>
+                            <a href="../../frontend/index.html" style="margin: 0px 6px 0px 6px;">Strona główna</a>
+                            <a href="../../frontend/projects.html" style="margin: 0px 6px 0px 6px;">Projekty</a>
+                            <a href="../../frontend/my_projects.html" style="margin: 0px 6px 0px 6px;">Moje projekty</a>
+                            <a href="../../frontend/contact.html" style="margin: 0px 6px 0px 6px;">Kontakt</a>
+                            <a href="../../frontend/login.html" style="margin: 0px 6px 0px 6px;">Logowanie</a>
+                            <a href="../../frontend/register.html" style="margin: 0px 6px 0px 6px;">Rejestracja</a>
+                        </v-card-title>
+                        <v-card-text style="background-color: rgb(2,8,12);" class="py-2 white--text text-center">
+                            <strong>{{ new Date().getFullYear() }} — &copy; Maciej Harbuz</strong>
+                        </v-card-text>
+                    </v-card>
+                </v-footer>
+            </v-app>
+        </div>
+    </body>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: {
+            drawer: false,
+            group: null,
+            admin_logged_in: false,
+            admin_email: '',
+            headers: [
+                {
+                text: 'ID',
+                align: 'start',
+                value: 'id'
+                },
+                { text: 'Temat', value: 'topic' },
+                { text: 'Opis', value: 'description' },
+                { text: 'Technologie', value: 'technologies' },
+                { text: 'Blokada', value: 'blocked' }
+            ],
+            projects: [],
+            search: '',
+            projects_loading: false,
+            add_project_dialog: false,
+            adding_project: false,
+            add_input_alert_1: false,
+            add_input_alert_2: false,
+            add_input_alert_3: false,
+            success_project_add_raport: false,
+            failure_project_add_raport: false,
+            failure_project_add_message: '',
+            p_blocked_list: [
+                '0',
+                '1',
+            ],
+            add_p_title: '',
+            add_p_description: '',
+            add_p_technologies: '',
+            add_p_blocked: '0',
+            selected_project: '',
+
+        },
+        mounted: function() {
+            if (localStorage.getItem('admin_logged_in') == 'true' && localStorage.getItem('admin_email')) {
+                this.admin_logged_in = localStorage.getItem('admin_logged_in');
+                this.admin_email = localStorage.getItem('admin_email');
+            }
+            if (this.admin_logged_in) {
+                this.DownloadProjects();
+            }
+        },
+        methods: {
+            DownloadProjects() {
+                let comp = this;
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("GET", "../backend/get_projects.php", true);
+                
+                xmlhttp.onprogress = function () {
+                    comp.projects_loading = true;
+                };
+
+                xmlhttp.onload = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        comp.projects = JSON.parse(this.responseText);
+                        console.log("Zwrot: ", comp.projects);
+                        comp.projects_loading = false;
+                    }
+                    else if (this.readyState == 4 && this.status == 0) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                        comp.projects_loading = false;
+                    }
+                };
+
+                xmlhttp.onerror = function (e) {
+                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                    comp.projects_loading = false;
+                };
+                
+                xmlhttp.send();
+            },
+            ShowAddForm() {
+                this.add_project_dialog = true;
+                this.add_input_alert_1 = false;
+                this.add_input_alert_2 = false;
+                this.add_input_alert_3 = false;
+                this.success_project_add_raport = false;
+                this.failure_project_add_raport = false;
+            },
+            AddProject() {
+                if (this.add_p_title.length != 0) {
+                    if (this.add_p_title.length <= 300) {
+                        let comp = this;
+                        let data = {
+                            topic: comp.add_p_title,
+                            description: comp.add_p_description,
+                            technologies: comp.add_p_technologies,
+                            blocked: comp.add_p_blocked,
+                        };
+
+                        let dataString = JSON.stringify(data);
+                        console.log("Dane: ", dataString);
+                        let xmlhttp = new XMLHttpRequest();
+                        xmlhttp.open("POST", "../backend/add_project.php");
+                        xmlhttp.setRequestHeader("Content-Type", "application/json");
+                        
+                        xmlhttp.onprogress = function () {
+                            comp.adding_project = true;
+                        };
+
+                        xmlhttp.onload = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                let response = JSON.parse(this.responseText);
+                                console.log("Zwrot: ", response);
+                                comp.failure_project_add_message = response.error;
+                                if (comp.failure_project_add_message != '') {
+                                    comp.failure_project_add_raport = true;
+                                    comp.add_project_dialog = false;
+                                }
+                                else {
+                                    comp.success_project_add_raport = true;
+                                    comp.add_project_dialog = false;
+                                    let id = response.added_project_id;
+                                    let title = comp.add_p_title;
+                                    let description = comp.add_p_description;
+                                    let technologies = comp.add_p_technologies;
+                                    let blocked = comp.add_p_blocked;
+                                    if (comp.add_p_description == '') {
+                                        description = 'Brak opisu.';
+                                    }
+                                    if (comp.add_p_technologies == '') {
+                                        technologies = 'Brak wybranych technologii.';
+                                    }
+                                    comp.projects.push({id: id, topic: title, description: description, technologies: technologies, blocked: blocked});
+                                }
+                                comp.adding_project = false;
+                            }
+                            else if (this.readyState == 4 && this.status == 0) {
+                                alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                comp.adding_project = false;
+                            }
+                        };
+
+                        xmlhttp.onerror = function (e) {
+                            alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                            comp.adding_project = false;
+                        };
+
+                        xmlhttp.send(dataString);
+                        
+                        this.add_input_alert_1 = false;
+                        this.add_input_alert_2 = false;
+                    }
+                    else {
+                        this.add_input_alert_2 = true;
+                    }
+                }
+                else {
+                    this.add_input_alert_1 = true;
+                }
+            },
+            LogOut() {
+                if (localStorage.getItem('admin_logged_in')) {
+                    localStorage.removeItem('admin_logged_in');
+                }
+                if (localStorage.getItem('admin_email')) {
+                    localStorage.removeItem('admin_email');
+                }
+                window.location.replace('../frontend/login.html');
+            }
+        }
+    });
+
+
+</script>
+
+</html>

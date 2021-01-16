@@ -149,6 +149,7 @@
                                       :search="search"
                                       :items-per-page="15"
                                       :loading="projects_loading"
+                                      no-data-text="Brak tematów do wyświetlenia"
                                     >
                                     <template v-slot:item="row">
                                         <tr>
@@ -156,7 +157,7 @@
                                             <td>{{row.item.description}}</td>
                                             <td>{{row.item.technologies}}</td>
                                             <td>
-                                                <v-btn class="mx-2" small color="#3949AB" @click="ShowForm(row.item)">Wybierz</v-btn>
+                                                <v-btn small color="#3949AB" @click="ShowForm(row.item)">Wybierz</v-btn>
                                             </td>
                                         </tr>
                                     </template>
@@ -188,11 +189,11 @@
                                             <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
                                         </v-alert>
                                         <v-alert v-model="input_alert_2" type="error">
-                                            Podaj tytuł.
+                                            Podaj temat.
                                             <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
                                         </v-alert>
                                         <v-alert v-model="input_alert_3" type="error">
-                                            Podaj krótszy tytuł projektu (maksymalnie 300 znaków).
+                                            Podaj krótszy temat projektu (maksymalnie 300 znaków).
                                             <v-btn rounded color="black" text @click="input_alert_3=false">OK</v-btn>
                                         </v-alert>
                                         <v-card-title class="headline">Podaj swoje dane</v-card-title>
@@ -204,7 +205,7 @@
                                         <v-card-title class="headline">Podaj dane projektu</v-card-title>
                                         <v-divider></v-divider>
                                         <v-container>
-                                            <v-textarea rows="1" auto-grow counter :rules="[v => v.length <= 300 || 'Maksymalnie 300 znaków']" v-model="own_p_topic" label="Tytuł"></v-textarea>
+                                            <v-textarea rows="1" auto-grow counter :rules="[v => v.length <= 300 || 'Maksymalnie 300 znaków']" v-model="own_p_title" label="Temat"></v-textarea>
                                             <v-textarea rows="3" auto-grow counter v-model="own_p_description" label="Opis projektu"></v-textarea>
                                             <v-textarea rows="1" auto-grow counter v-model="own_p_technologies" label="Technologie (jeśli nie wiesz - zostaw puste pole)"></v-textarea>
                                         </v-container>
@@ -289,7 +290,7 @@
             submitting_report2: false,
             input_alert_2: false,
             input_alert_3: false,
-            own_p_topic: '',
+            own_p_title: '',
             own_p_description: '',
             own_p_technologies: '',
             success_raport2: false,
@@ -412,14 +413,14 @@
             },
             ReportOwnParticipation() {
                 if (this.first_name != '' && this.second_name != '') {
-                    if (this.own_p_topic.length != 0) {
-                        if (this.own_p_topic.length <= 300) {
+                    if (this.own_p_title.length != 0) {
+                        if (this.own_p_title.length <= 300) {
                             let comp = this;
                             let data = {
                                 email: comp.user_email,
                                 first_name: comp.first_name,
                                 second_name: comp.second_name,
-                                topic: comp.own_p_topic,
+                                topic: comp.own_p_title,
                                 description: comp.own_p_description,
                                 technologies: comp.own_p_technologies,
                             };

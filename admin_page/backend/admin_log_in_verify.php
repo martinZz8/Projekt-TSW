@@ -26,7 +26,7 @@
                 $json = array(
                     "admin_login_status" => 'false',
                     "admin_email" => $data->admin_email,
-                    "error" => 'Podano błędne dane logowania. (1)'
+                    "error" => 'Podano błędne dane logowania.'
                 );
             }
         }
@@ -53,7 +53,7 @@
                     $json = array(
                         "admin_login_status" => 'false',
                         "admin_email" => $data->admin_email,
-                        "error" => 'Podano błędne dane logowania. (2)'
+                        "error" => 'Podano błędne dane logowania.'
                     );
                 }
             }
@@ -61,7 +61,7 @@
                 $json = array(
                     "admin_login_status" => 'false',
                     "admin_email" => $data->admin_email,
-                    "error" => 'Podano błędne dane logowania. (3)'
+                    "error" => 'Podano błędne dane logowania.'
                 );
             }
         }

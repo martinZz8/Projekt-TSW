@@ -2,7 +2,7 @@
 
 <html lang="pl">
     <head>
-        <title>System rezerwacji projektów TSW</title>
+        <title>Panel administracyjny systemu rezerwacji projektów TSW</title>
         <meta charset="utf-8">
         <meta name="keywords" content="System rezerwacji projektów, System reservation, TSW, PRZ, Projekty TSW">
         <meta name="description" content="Strona rezerwacji projektów z przedmiotu TSW - Politechnika Rzeszowska">
@@ -238,7 +238,7 @@
                                     localStorage.setItem('admin_email', response.admin_email);
                                     console.log("Zapisane admin_logged_in: ", localStorage.getItem('admin_logged_in'));
                                     console.log("Zapisane admin_email: ", localStorage.getItem('admin_email'));
-                                    //window.location.replace('../frontend/projects.html');
+                                    window.location.replace('../frontend/projects.html');
                                 }
                                 comp.admin_login_in_progress = false;
                             }

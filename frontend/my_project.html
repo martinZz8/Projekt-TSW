@@ -135,6 +135,7 @@
                                       :items="my_project"
                                       :items-per-page="5"
                                       :loading="project_loading"
+                                      no-data-text="Brak wybranego tematu"
                                     >
                                     <template v-slot:item="row">
                                         <tr>
@@ -142,7 +143,7 @@
                                             <td>{{row.item.description}}</td>
                                             <td>{{row.item.technologies}}</td>
                                             <td>
-                                                <v-btn class="mx-2" small color="#ff726f" @click="leave_dialog = true">Zrezygnuj</v-btn>
+                                                <v-btn small color="#ff726f" @click="leave_dialog = true">Zrezygnuj</v-btn>
                                             </td>
                                         </tr>
                                     </template>
