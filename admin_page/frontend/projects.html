@@ -142,6 +142,14 @@
                                         {{failure_project_delete_message}}
                                         <v-btn rounded color="black" text @click="failure_project_delete_raport=false">OK</v-btn>
                                     </v-alert>
+                                    <v-alert v-model="success_project_update_raport" type="success">
+                                        Pomyślnie edytowano wybrany projekt.
+                                        <v-btn rounded color="black" text @click="success_project_update_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_project_update_raport" type="error">
+                                        {{failure_project_update_message}}
+                                        <v-btn rounded color="black" text @click="failure_project_update_raport=false">OK</v-btn>
+                                    </v-alert>
                                     <v-card-title>
                                         Lista projektów
                                         <v-spacer></v-spacer>
@@ -169,7 +177,7 @@
                                             <td>{{row.item.description}}</td>
                                             <td>{{row.item.technologies}}</td>
                                             <td title="0-niezablokowany, 1-zablokowany">{{row.item.blocked}}</td>
-                                            <td><v-icon title="Edytuj projekt" @click="ShowModifyForm(row.item)">mdi-pencil</v-icon></td>
+                                            <td><v-icon title="Aktualizuj projekt" @click="ShowUpdateForm(row.item)">mdi-pencil</v-icon></td>
                                             <td><v-icon title="Usuń projekt" @click="ShowDeleteForm(row.item)">mdi-delete</v-icon></td>
                                         </tr>
                                     </template>
@@ -195,7 +203,7 @@
                                         </v-container>
                                         <v-card-actions>
                                             <v-spacer></v-spacer>
-                                            <v-btn color="blue darken-1" text @click="add_project_dialog=false">Wróć</v-btn>
+                                            <v-btn color="blue darken-1" text @click="add_project_dialog=false, add_p_blocked='0'">Wróć</v-btn>
                                             <v-btn color="blue darken-1" text @click="AddProject()">Prześlij projekt</v-btn>
                                         </v-card-actions>
                                       </v-card>
@@ -210,6 +218,31 @@
                                             <v-btn color="green darken-1" @click="DeleteProject()">Tak</v-btn>
                                         </v-card-actions>
                                     </v-card>
+                                </v-dialog>
+                                <v-dialog :loading="updating_project" dark v-model="update_project_dialog" max-width="500px">
+                                    <v-card>
+                                        <v-alert v-model="update_input_alert_1" type="error">
+                                            Podaj temat.
+                                            <v-btn rounded color="black" text @click="update_input_alert_1=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-alert v-model="update_input_alert_2" type="error">
+                                            Podaj krótszy temat projektu (maksymalnie 300 znaków).
+                                            <v-btn rounded color="black" text @click="update_input_alert_2=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-card-title class="headline">Podaj dane projektu</v-card-title>
+                                        <v-divider></v-divider>
+                                        <v-container>
+                                            <v-textarea rows="1" auto-grow counter :rules="[v => v.length <= 300 || 'Maksymalnie 300 znaków']" v-model="update_p_title" label="Temat"></v-textarea>
+                                            <v-textarea rows="3" auto-grow counter v-model="update_p_description" label="Opis projektu"></v-textarea>
+                                            <v-textarea rows="1" auto-grow counter v-model="update_p_technologies" label="Technologie"></v-textarea>
+                                            <v-select class="mt-3" :items="p_blocked_list" v-model="update_p_blocked" label="Blokada (0-niezablokowany, 1-zablokowany)"></v-select>
+                                        </v-container>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="blue darken-1" text @click="update_project_dialog=false, update_p_blocked='0', selected_item_index='', selected_project_id=''">Wróć</v-btn>
+                                            <v-btn color="blue darken-1" text @click="UpdateProject()">Zaktualizuj projekt</v-btn>
+                                        </v-card-actions>
+                                      </v-card>
                                 </v-dialog>
                             </v-container>
                         </v-col>
@@ -289,6 +322,17 @@
             success_project_delete_raport: false,
             failure_project_delete_raport: false,
             failure_project_delete_message: '',
+            update_project_dialog: false,
+            updating_project: false,
+            success_project_update_raport: false,
+            failure_project_update_raport: false,
+            failure_project_update_message: '',
+            update_p_title: '',
+            update_p_description: '',
+            update_p_technologies: '',
+            update_p_blocked: '0',
+            update_input_alert_1: false,
+            update_input_alert_2: false,
         },
         mounted: function() {
             if (localStorage.getItem('admin_logged_in') == 'true' && localStorage.getItem('admin_email')) {
@@ -472,6 +516,95 @@
                 };
                 
                 xmlhttp.send(dataString);                
+            },
+            ShowUpdateForm(choosen_item) {
+                this.selected_item_index = this.IndexOfElement(choosen_item);
+                this.selected_project_id = choosen_item.id;
+                this.update_p_title = choosen_item.topic;
+                this.update_p_description = choosen_item.description;
+                this.update_p_technologies = choosen_item.technologies;
+                this.update_p_blocked = choosen_item.blocked;
+                this.update_project_dialog = true;
+                this.success_project_update_raport = false;
+                this.failure_project_update_raport = false;
+            },
+            UpdateProject() {
+                if (this.update_p_title.length != 0) {
+                    if (this.update_p_title.length <= 300) {
+                        let comp = this;
+                        let data = {
+                            id: comp.selected_project_id,
+                            topic: comp.update_p_title,
+                            description: comp.update_p_description,
+                            technologies: comp.update_p_technologies,
+                            blocked: comp.update_p_blocked,
+                        };
+
+                        let dataString = JSON.stringify(data);
+                        console.log("Dane: ", dataString);
+                        let xmlhttp = new XMLHttpRequest();
+                        xmlhttp.open("POST", "../backend/update_project.php");
+                        xmlhttp.setRequestHeader("Content-Type", "application/json");
+                        
+                        xmlhttp.onprogress = function () {
+                            comp.adding_project = true;
+                        };
+
+                        xmlhttp.onload = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                comp.failure_project_update_message = this.responseText;
+                                console.log("Zwrot: ", comp.failure_project_update_message);
+                                if (comp.failure_project_update_message != '') {
+                                    comp.failure_project_update_raport = true;
+                                    comp.update_project_dialog = false;
+                                }
+                                else {
+                                    comp.success_project_update_raport = true;
+                                    comp.update_project_dialog = false;
+                                    if (comp.selected_item_index != -1) {
+                                        let title = comp.update_p_title;
+                                        let description = comp.update_p_description;
+                                        let technologies = comp.update_p_technologies;
+                                        let blocked = comp.update_p_blocked;
+                                        if (comp.update_p_description == '') {
+                                            description = 'Brak opisu.';
+                                        }
+                                        if (comp.update_p_technologies == '') {
+                                            technologies = 'Brak wybranych technologii.';
+                                        }
+                                        comp.projects[comp.selected_item_index].topic = title;
+                                        comp.projects[comp.selected_item_index].description = description;
+                                        comp.projects[comp.selected_item_index].technologies = technologies;
+                                        comp.projects[comp.selected_item_index].blocked = blocked;
+                                    }
+                                }
+                                comp.updating_project = false;
+                                comp.selected_item_index = '';
+                                comp.selected_project_id = '';
+                            }
+                            else if (this.readyState == 4 && this.status == 0) {
+                                alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                comp.deleting_project = false;
+                            }
+                        };
+
+                        xmlhttp.onerror = function (e) {
+                            alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                            comp.updating_project = false;
+                        };
+
+                        xmlhttp.send(dataString);
+                        
+                        this.update_input_alert_1 = false;
+                        this.update_input_alert_2 = false;
+                    }
+                    else {
+                        this.update_input_alert_2 = true;
+                    }
+                }
+                else {
+                    this.update_input_alert_1 = true;
+                }
             },
             LogOut() {
                 if (localStorage.getItem('admin_logged_in')) {
