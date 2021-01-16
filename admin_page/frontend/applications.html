@@ -160,6 +160,35 @@
                                     </template>
                                     </v-data-table>
                                 </v-card>
+                                <v-dialog :loading="adding_application" dark v-model="add_application_dialog" max-width="500px">
+                                    <v-card>
+                                        <v-alert v-model="add_input_alert_1" type="error">
+                                            Podaj email.
+                                            <v-btn rounded color="black" text @click="add_input_alert_1=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-alert v-model="add_input_alert_2" type="error">
+                                            Podaj imię.
+                                            <v-btn rounded color="black" text @click="add_input_alert_2=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-alert v-model="add_input_alert_3" type="error">
+                                            Podaj nazwisko.
+                                            <v-btn rounded color="black" text @click="add_input_alert_3=false">OK</v-btn>
+                                        </v-alert>
+                                        <v-card-title class="headline">Podaj dane aplikacji</v-card-title>
+                                        <v-divider></v-divider>
+                                        <v-container>
+                                            <v-textarea rows="1" auto-grow counter :rules="[v => v.length <= 300 || 'Maksymalnie 300 znaków']" v-model="add_p_title" label="Temat"></v-textarea>
+                                            <v-textarea rows="3" auto-grow counter v-model="add_p_description" label="Opis projektu"></v-textarea>
+                                            <v-textarea rows="1" auto-grow counter v-model="add_p_technologies" label="Technologie"></v-textarea>
+                                            <v-select class="mt-3" :items="p_blocked_list" v-model="add_p_blocked" label="Blokada (0-niezablokowany, 1-zablokowany)"></v-select>
+                                        </v-container>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="blue darken-1" text @click="add_application_dialog=false">Wróć</v-btn>
+                                            <v-btn color="blue darken-1" text @click="AddApplication()">Prześlij aplikację</v-btn>
+                                        </v-card-actions>
+                                      </v-card>
+                                </v-dialog>
                             </v-container>
                         </v-col>
                     </v-row>
@@ -213,8 +242,22 @@
                 { text: 'Tytuł projektu', value: 'topic' },
             ],
             applications: [],
+            users_list: [],
+            projects_list: [],
             search: '',
             applications_loading: false,
+            add_application_dialog: false,
+            adding_application: false,
+            add_input_alert_1: false,
+            add_input_alert_2: false,
+            add_input_alert_3: false,
+            success_application_add_raport: false,
+            failure_application_add_raport: false,
+            failure_application_add_message: '',
+            add_a_email: '',
+            add_a_first_name: '',
+            add_a_second_name: '',
+            add_a_project_id: '',
             
         },
         mounted: function() {
@@ -224,6 +267,8 @@
             }
             if (this.admin_logged_in) {
                 this.DownloadApplications();
+                this.DownloadUsers();
+                this.DownloadProjects();
             }
         },
         methods: {
@@ -250,6 +295,70 @@
                     if (this.readyState == 4 && this.status == 200) {
                         comp.applications = JSON.parse(this.responseText);
                         console.log("Zwrot: ", comp.applications);
+                        comp.applications_loading = false;
+                    }
+                    else if (this.readyState == 4 && this.status == 0) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                        comp.applications_loading = false;
+                    }
+                };
+
+                xmlhttp.onerror = function (e) {
+                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                    comp.applications_loading = false;
+                };
+                
+                xmlhttp.send();
+            },
+            DownloadUsers() {
+                let comp = this;
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("GET", "../backend/get_small_users.php", true);
+                
+                xmlhttp.onprogress = function () {
+                    comp.applications_loading = true;
+                };
+
+                xmlhttp.onload = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        let response = JSON.parse(this.responseText);
+                        console.log("Zwrot users: ", response);
+                        for (let i=0; i<response.length; i++) {
+                            comp.users_list.push(response[i].email);
+                        }
+                        console.log("users_list: ",comp.users_list);
+                        comp.applications_loading = false;
+                    }
+                    else if (this.readyState == 4 && this.status == 0) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                        comp.applications_loading = false;
+                    }
+                };
+
+                xmlhttp.onerror = function (e) {
+                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                    comp.applications_loading = false;
+                };
+                
+                xmlhttp.send();
+            },
+            DownloadProjects() {
+                let comp = this;
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("GET", "../backend/get_small_projects.php", true);
+                
+                xmlhttp.onprogress = function () {
+                    comp.applications_loading = true;
+                };
+
+                xmlhttp.onload = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        let response = JSON.parse(this.responseText);
+                        console.log("Zwrot projects: ", response);
+                        for (let i=0; i<response.length; i++) {
+                            comp.projects_list.push(response[i].id+" - "+response[i].topic);
+                        }
+                        console.log("projects_list: ",comp.projects_list);
                         comp.applications_loading = false;
                     }
                     else if (this.readyState == 4 && this.status == 0) {
