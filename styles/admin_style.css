@@ -1,0 +1,99 @@
+.app_bar
+{
+    font-size: 20px;
+}
+ul.menu_list > li
+{
+    list-style-type: none;
+    float: left;
+}
+ul.menu_list > li > a:hover
+{
+    background-color: rgba(0,0,0,0.7);
+    color: white!important;
+}
+a.menu_list
+{
+    height: 64px;
+    padding-top: 18px;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: block;
+    text-decoration: none;
+    font-weight: 500;
+    color: #00154F!important;
+}
+a.start:hover
+{
+    background-color: rgba(0,0,0,0.7);
+    color: white!important;
+}
+.active
+{
+    color: white!important;
+    border-bottom: 3px solid white;
+}
+.login, .logout, .register
+{
+    font-size: 15px!important;
+    font-weight: 600!important;
+}
+p.h_menu_item
+{
+    color: #00154F!important;
+}
+#bg_img_1
+{
+    background: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ), url('../static/bg1.jpg');
+    -webkit-background-size: cover;
+    -moz-background-size:  cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    top: 0;
+    left: 0;
+    background-attachment: fixed;
+}
+.box_shadow
+{
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0px 0px 50px 50px rgba(0,0,0,0.7);
+}
+h1
+{
+    color: white;
+}
+#hamburger_menu
+{
+    visibility: visible;
+}
+#normal_menu
+{
+    visibility: hidden;
+}
+
+.smartphone_block
+{
+    width: 100%;
+    margin-left: 0px;
+    margin-top: 10px;
+}
+
+@media all and (min-width: 870px)
+{
+    #hamburger_menu
+    {
+        visibility: hidden;
+    }
+    #normal_menu
+    {
+        visibility: visible;
+    }
+    .smartphone_block
+    {
+        width: auto;
+        margin-left: 20px;
+        margin-top: 0px;
+    }
+    
+}

@@ -7,8 +7,8 @@
         <meta name="keywords" content="System rezerwacji projektów, System reservation, TSW, PRZ, Projekty TSW">
         <meta name="description" content="Strona rezerwacji projektów z przedmiotu TSW - Politechnika Rzeszowska">
         <meta name="title" content="System rezerwacji projektów TSW">
-        <link rel="shortcut icon" href="../static/favicon.ico">
-        <link rel="stylesheet" type="text/css" href="../styles/style.css">
+        <link rel="shortcut icon" href="../../static/favicon.ico">
+        <link rel="stylesheet" type="text/css" href="../../styles/admin_style.css">
         <!--Start: Vue + Vuetify-->
         <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
@@ -25,44 +25,39 @@
         <div id="app">
             <v-app>
                 <v-app-bar app color="#1750caed" class="app_bar" id="hamburger_menu">
-                    <a href="../frontend/index.html"><img src="../static/code.png"></img></a>
+                    <v-icon>mdi-console</v-icon>
                     <v-spacer></v-spacer>
                     <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
                 </v-app-bar>
                 <v-navigation-drawer dark v-model="drawer" temporary fixed>
                     <v-list nav dense>
                         <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
-                            <v-list-item v-if="logged_in" style="cursor: default;">
+                            <v-list-item style="cursor: default;">
+                                <v-list-item-title style="text-align: center; font-weight: 700; font-size: 18px;">Panel administratora</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="admin_logged_in" style="cursor: default;">
                                 <v-list-item-icon><v-icon>mdi-account</v-icon></v-list-item-icon>
                                 <v-list-item-title>Zalogowany jako:</v-list-item-title>
                             </v-list-item>
-                            <v-list-item v-if="logged_in" style="cursor: default;">
-                                <v-list-item-title style="text-align: center;">{{user_email}}</v-list-item-title>
+                            <v-list-item v-if="admin_logged_in" style="cursor: default;">
+                                <v-list-item-title style="text-align: center;">{{admin_email}}</v-list-item-title>
                             </v-list-item>
                             <v-divider></v-divider>
-                            <v-list-item href="../frontend/index.html">
-                                <v-list-item-icon><v-icon>mdi-home</v-icon></v-list-item-icon>
-                                <v-list-item-title>Start</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item href="../frontend/projects.html">
+                            <v-list-item v-if="admin_logged_in" href="../frontend/projects.html">
                                 <v-list-item-icon><v-icon>mdi-console-line</v-icon></v-list-item-icon>
                                 <v-list-item-title>Projekty</v-list-item-title>
                             </v-list-item>
-                            <v-list-item v-if="logged_in" href="../frontend/my_project.html">
+                            <v-list-item v-if="admin_logged_in" href="../frontend/applications.html">
                                 <v-list-item-icon><v-icon>mdi-lead-pencil</v-icon></v-list-item-icon>
-                                <v-list-item-title>Mój projekt</v-list-item-title>
+                                <v-list-item-title>Zgłoszenia</v-list-item-title>
                             </v-list-item>
-                            <v-list-item href="../frontend/contact.html">
-                                <v-list-item-icon><v-icon>mdi-email</v-icon></v-list-item-icon>
-                                <v-list-item-title>Kontakt</v-list-item-title>
+                            <v-list-item v-if="admin_logged_in" href="../frontend/users.html">
+                                <v-list-item-icon><v-icon>mdi-account-group</v-icon></v-list-item-icon>
+                                <v-list-item-title>Użytkownicy</v-list-item-title>
                             </v-list-item>
-                            <v-list-item v-if="!logged_in" href="../frontend/login.html">
+                            <v-list-item v-if="!admin_logged_in" href="../frontend/login.html">
                                 <v-list-item-icon><v-icon>mdi-login</v-icon></v-list-item-icon>
                                 <v-list-item-title>Zaloguj się!</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item v-if="!logged_in" href="../frontend/register.html">
-                                <v-list-item-icon><v-icon>mdi-account-plus</v-icon></v-list-item-icon>
-                                <v-list-item-title>Zarejestruj się!</v-list-item-title>
                             </v-list-item>
                             <v-list-item v-else @click="LogOut()">
                                 <v-list-item-icon><v-icon>mdi-logout</v-icon></v-list-item-icon>
@@ -73,27 +68,39 @@
                 </v-navigation-drawer>
                 
                 <v-app-bar app color="#1750caed" class="app_bar" id="normal_menu">
-                    <a href="../frontend/index.html"><img src="../static/code.png" style="margin-right: 10px;"></img></a>
-                    <a class="menu_list start" href="../frontend/index.html">Start</a>
+                    <v-icon>mdi-console</v-icon>
+                    <v-row justify="start" class="ml-2">
+                        <v-col cols="auto">
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pb-1 pl-0 pr-0 pt-0">
+                                    <p style="margin: 0; font-weight: 500;">Panel</p>
+                                </v-col>
+                            </v-row>
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pb-0 pl-0 pr-0 pt-1">
+                                    <p style="margin: 0; font-weight: 500;">administracyjny</p>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
                     <v-spacer></v-spacer>
                     <ul class="menu_list">
-                        <li>
+                        <li v-if="admin_logged_in">
                             <a class="menu_list" href="../frontend/projects.html">Projekty</a>
                         </li>
-                        <li v-if="logged_in">
-                            <a class="menu_list" href="../frontend/my_project.html">Mój projekt</a>
+                        <li v-if="admin_logged_in">
+                            <a class="menu_list" href="../frontend/applications.html">Zgłoszenia</a>
                         </li>
-                        <li>
-                            <a class="menu_list" href="../frontend/contact.html">Kontakt</a>
+                        <li v-if="admin_logged_in">
+                            <a class="menu_list" href="../frontend/users.html">Użytkownicy</a>
                         </li>
-                        <li v-if="!logged_in">
+                        <li v-if="!admin_logged_in">
                             <v-btn outlined elevation="3" large class="mt-2 ml-5 login" href="../frontend/login.html">Zaloguj się!</v-btn>
-                            <v-btn outlined elevation="3" large class="mt-2 ml-2 register" href="../frontend/register.html">Zarejestruj się!</v-btn>
                         </li>
                         <li v-else>
                             <v-row justify="center">
                                 <v-col cols="auto" class="pt-3 pb-0">
-                                    <p style="margin: 0;">{{user_email}}</p>
+                                    <p style="margin: 0;">{{admin_email}}</p>
                                 </v-col>
                             </v-row>
                             <v-row justify="center">
@@ -110,14 +117,14 @@
                         <v-col clos="12">
                             <v-row justify="center" style="padding-top: 200px;">
                                 <v-col cols="auto" class="box_shadow">
-                                    <h1>Zaloguj się</h1>
+                                    <h1>Zaloguj się do panelu administracyjnego</h1>
                                 </v-col>
                             </v-row>
                         </v-col>
                     </v-row>
-                    <v-row v-if="!logged_in" justify="center" style="background-color: #2b3335; min-height: 600px;">
+                    <v-row v-if="!admin_logged_in" justify="center" style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="11" xs="11" sm="8" md="5" lg="4"xl="3">
-                            <v-card dark :loading="login_in_progress" class="mt-16 mb-16">
+                            <v-card dark :loading="admin_login_in_progress" class="mt-16 mb-16">
                                 <v-alert v-model="input_alert_1" type="error">
                                     Podaj hasło.
                                     <v-btn rounded color="black" text @click="input_alert_1=false">OK</v-btn>
@@ -130,14 +137,13 @@
                                     Nie udało się zalogować. {{failure_message}}
                                     <v-btn rounded color="black" text @click="login_failure=false">OK</v-btn>
                                 </v-alert>
-                                <v-card-title class="headline">Dane logowania do konta</v-card-title>
+                                <v-card-title class="headline">Dane logowania do konta<br>administratora</v-card-title>
                                 <v-divider></v-divider>
                                 <v-container>
-                                    <v-text-field v-model="input_user_email" label="Email"></v-text-field>
-                                    <v-text-field v-model="input_user_password" label="Hasło" type="password"></v-text-field>
+                                    <v-text-field v-model="input_admin_email" label="Email"></v-text-field>
+                                    <v-text-field v-model="input_admin_password" label="Hasło" type="password"></v-text-field>
                                 </v-container>
                                 <v-card-actions>
-                                    <p style="margin-bottom: 0px; margin-left: 8px;">Nie masz konta? <a href="../frontend/register.html">Zarejestruj się!</a></p>
                                     <v-spacer></v-spacer>
                                     <v-btn color="blue darken-1" text @click="LogIn()">Zaloguj</v-btn>
                                 </v-card-actions>
@@ -147,7 +153,7 @@
                     <v-row v-else justify="center" style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="12">
                             <v-container>
-                                <p style="color: white;">Jesteś już zalogowany.</p>
+                                <p style="color: white;">Jesteś już zalogowany jako administrator.</p>
                             </v-container>
                         </v-col>
                     </v-row>
@@ -155,20 +161,13 @@
                 <v-footer dark padless>
                     <v-card class="flex" flat tile>
                         <v-card-title style="background-color: rgb(5,12,15);">
-                            <strong class="subheading">Sprawdź nasze inne witryny!</strong>
-                            <v-spacer></v-spacer>
-                            <v-btn href="http://www.facebook.com" target="_blank" class="mx-4" dark icon>
-                                <v-icon size="24px">mdi-facebook</v-icon>
-                            </v-btn>
-                            <v-btn href="http://www.twitter.com" target="_blank" class="mx-4" dark icon>
-                                <v-icon size="24px">mdi-twitter</v-icon>
-                            </v-btn>
-                            <v-btn href="http://www.youtube.com" target="_blank" class="mx-4" dark icon>
-                                <v-icon size="24px">mdi-youtube</mdi-youtube></v-icon>
-                            </v-btn>
-                            <v-btn href="http://www.instagram.com" target="_blank" class="mx-4" dark icon>
-                                <v-icon size="24px">mdi-instagram</v-icon>
-                            </v-btn>
+                            <strong class="subheading">Strony systemu rezerwacji projektów: </strong>
+                            <a href="../../frontend/index.html" style="margin: 0px 6px 0px 6px;">Strona główna</a>
+                            <a href="../../frontend/projects.html" style="margin: 0px 6px 0px 6px;">Projekty</a>
+                            <a href="../../frontend/my_projects.html" style="margin: 0px 6px 0px 6px;">Moje projekty</a>
+                            <a href="../../frontend/contact.html" style="margin: 0px 6px 0px 6px;">Kontakt</a>
+                            <a href="../../frontend/login.html" style="margin: 0px 6px 0px 6px;">Logowanie</a>
+                            <a href="../../frontend/register.html" style="margin: 0px 6px 0px 6px;">Rejestracja</a>
                         </v-card-title>
                         <v-card-text style="background-color: rgb(2,8,12);" class="py-2 white--text text-center">
                             <strong>{{ new Date().getFullYear() }} — &copy; Maciej Harbuz</strong>
@@ -186,11 +185,11 @@
         data: {
             drawer: false,
             group: null,
-            logged_in: false,
-            user_email: '',
-            input_user_email: '',
-            input_user_password: '',
-            login_in_progress: false,
+            admin_logged_in: false,
+            admin_email: '',
+            input_admin_email: '',
+            input_admin_password: '',
+            admin_login_in_progress: false,
             input_alert_1: false,
             input_alert_2: false,
             login_failure: false,
@@ -198,60 +197,60 @@
 
         },
         mounted: function() {
-            if (localStorage.getItem('logged_in') == 'true' && localStorage.getItem('user_email')) {
-                this.logged_in = localStorage.getItem('logged_in');
-                this.user_email = localStorage.getItem('user_email');
+            if (localStorage.getItem('admin_logged_in') == 'true' && localStorage.getItem('admin_email')) {
+                this.admin_logged_in = localStorage.getItem('admin_logged_in');
+                this.admin_email = localStorage.getItem('admin_email');
             }
         },
         methods: {
             LogIn() {
-                if (this.input_user_password != '') {
+                if (this.input_admin_password != '') {
                     const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-                    if (re.test(String(this.input_user_email).toLowerCase())) {
+                    if (re.test(String(this.input_admin_email).toLowerCase())) {
                         let comp = this;
                         let data = {
-                            user_email: comp.input_user_email,
-                            user_password: comp.input_user_password,
+                            admin_email: comp.input_admin_email,
+                            admin_password: comp.input_admin_password,
                         };
 
                         let dataString = JSON.stringify(data);
                         console.log("Dane: ", dataString);
                         let xmlhttp = new XMLHttpRequest();
-                        xmlhttp.open("POST", "../backend/log_in_verify.php");
+                        xmlhttp.open("POST", "../backend/admin_log_in_verify.php");
                         xmlhttp.setRequestHeader("Content-Type", "application/json");
                         
                         xmlhttp.onprogress = function () {
-                            comp.login_in_progress = true;
+                            comp.admin_login_in_progress = true;
                         };
 
                         xmlhttp.onload = function () {
                             if (this.readyState == 4 && this.status == 200) {
                                 let response = JSON.parse(this.responseText);
                                 console.log("Zwrot loginu: ", response);
-                                let login_status = response.login_status;
-                                if (login_status == 'false') {
+                                let admin_login_status = response.admin_login_status;
+                                if (admin_login_status == 'false') {
                                     comp.failure_message = response.error;
                                     comp.login_failure = true;
                                 }
                                 else {
-                                    console.log("Zalogowano ");
-                                    localStorage.setItem('logged_in', true);
-                                    localStorage.setItem('user_email', response.user_email);
-                                    console.log("Zapisane logged_in: ", localStorage.getItem('logged_in'));
-                                    console.log("Zapisane user_email: ", localStorage.getItem('user_email'));
-                                    window.location.replace('../frontend/projects.html');
+                                    console.log("Zalogowano");
+                                    localStorage.setItem('admin_logged_in', true);
+                                    localStorage.setItem('admin_email', response.admin_email);
+                                    console.log("Zapisane admin_logged_in: ", localStorage.getItem('admin_logged_in'));
+                                    console.log("Zapisane admin_email: ", localStorage.getItem('admin_email'));
+                                    //window.location.replace('../frontend/projects.html');
                                 }
-                                comp.login_in_progress = false;
+                                comp.admin_login_in_progress = false;
                             }
                             else if (this.readyState == 4 && this.status == 0) {
                                 alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
-                                comp.login_in_progress = false;
+                                comp.admin_login_in_progress = false;
                             }
                         };
 
                         xmlhttp.onerror = function (e) {
                             alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
-                            comp.login_in_progress = false;
+                            comp.admin_login_in_progress = false;
                         };
 
                         xmlhttp.send(dataString);
@@ -269,13 +268,13 @@
                 }
             },
             LogOut() {
-                if (localStorage.getItem('logged_in')) {
-                    localStorage.removeItem('logged_in');
+                if (localStorage.getItem('admin_logged_in')) {
+                    localStorage.removeItem('admin_logged_in');
                 }
-                if (localStorage.getItem('user_email')) {
-                    localStorage.removeItem('user_email');
+                if (localStorage.getItem('admin_email')) {
+                    localStorage.removeItem('admin_email');
                 }
-                window.location.replace('../frontend/index.html');
+                window.location.replace('../frontend/login.html');
             }
         }
     });
