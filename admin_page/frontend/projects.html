@@ -134,6 +134,14 @@
                                         Nie udało się dodać projektu. {{failure_project_add_message}}
                                         <v-btn rounded color="black" text @click="failure_project_add_raport=false">OK</v-btn>
                                     </v-alert>
+                                    <v-alert v-model="success_project_delete_raport" type="success">
+                                        Pomyślnie usunięto wybrany projekt.
+                                        <v-btn rounded color="black" text @click="success_project_delete_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_project_delete_raport" type="error">
+                                        {{failure_project_delete_message}}
+                                        <v-btn rounded color="black" text @click="failure_project_delete_raport=false">OK</v-btn>
+                                    </v-alert>
                                     <v-card-title>
                                         Lista projektów
                                         <v-spacer></v-spacer>
@@ -191,6 +199,17 @@
                                             <v-btn color="blue darken-1" text @click="AddProject()">Prześlij projekt</v-btn>
                                         </v-card-actions>
                                       </v-card>
+                                </v-dialog>
+                                <v-dialog :loading="deleting_project" dark v-model="delete_project_dialog" max-width="460px">
+                                    <v-card>
+                                        <v-card-title class="headline">Czy na pewno chcesz usunąć projekt?</v-card-title>
+                                        <v-divider></v-divider>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="red darken-1" @click="delete_project_dialog=false, selected_item_index='', selected_project_id=''">Nie</v-btn>
+                                            <v-btn color="green darken-1" @click="DeleteProject()">Tak</v-btn>
+                                        </v-card-actions>
+                                    </v-card>
                                 </v-dialog>
                             </v-container>
                         </v-col>
@@ -263,8 +282,13 @@
             add_p_description: '',
             add_p_technologies: '',
             add_p_blocked: '0',
-            selected_project: '',
-
+            selected_project_id: '',
+            selected_item_index: '',
+            delete_project_dialog: false,
+            deleting_project: false,
+            success_project_delete_raport: false,
+            failure_project_delete_raport: false,
+            failure_project_delete_message: '',
         },
         mounted: function() {
             if (localStorage.getItem('admin_logged_in') == 'true' && localStorage.getItem('admin_email')) {
@@ -276,6 +300,16 @@
             }
         },
         methods: {
+            IndexOfElement (choosen_item) {
+                let obj_index = -1;
+                this.projects.forEach(function (item, index) {
+                    if (choosen_item.id == item.id) {
+                        obj_index = index;
+                        return;
+                    }
+                });
+                return obj_index;
+            },
             DownloadProjects() {
                 let comp = this;
                 var xmlhttp = new XMLHttpRequest();
@@ -383,6 +417,61 @@
                 else {
                     this.add_input_alert_1 = true;
                 }
+            },
+            ShowDeleteForm(choosen_item) {
+                //Szukanie indexu elementu
+                this.selected_item_index = this.IndexOfElement(choosen_item);
+                this.selected_project_id = choosen_item.id;
+                this.delete_project_dialog = true;
+                this.success_project_delete_raport = false;
+                this.failure_project_delete_raport = false;
+            },
+            DeleteProject() {
+                let comp = this;
+                let data = {
+                    project_id: comp.selected_project_id,
+                };
+                let dataString = JSON.stringify(data);
+                console.log("Dane: ", dataString);             
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("POST", "../backend/delete_project.php");
+                xmlhttp.setRequestHeader("Content-Type", "application/json");
+                
+                xmlhttp.onprogress = function () {
+                    comp.deleting_project = true;
+                };
+
+                xmlhttp.onload = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        comp.failure_project_delete_message = this.responseText;
+                        console.log("Zwrot: ", comp.failure_project_delete_message);
+                        if (comp.failure_project_delete_message != '') {
+                            comp.failure_project_delete_raport = true;
+                            comp.delete_project_dialog = false;
+                        }
+                        else {
+                            comp.success_project_delete_raport = true;
+                            comp.delete_project_dialog = false;
+                            if (comp.selected_item_index != -1) {
+                                comp.projects.splice(comp.selected_item_index, 1);
+                            }
+                        }
+                        comp.deleting_project = false;
+                        comp.selected_item_index = '';
+                        comp.selected_project_id = '';
+                    }
+                    else if (this.readyState == 4 && this.status == 0) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                        comp.deleting_project = false;
+                    }
+                };
+
+                xmlhttp.onerror = function (e) {
+                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                    comp.deleting_project = false;
+                };
+                
+                xmlhttp.send(dataString);                
             },
             LogOut() {
                 if (localStorage.getItem('admin_logged_in')) {
