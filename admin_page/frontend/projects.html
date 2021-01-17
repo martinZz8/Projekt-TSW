@@ -348,7 +348,7 @@
                 this.projects.forEach(function (item, index) {
                     if (choosen_item.id == item.id) {
                         obj_index = index;
-                        return;
+                        return obj_index;
                     }
                 });
                 return obj_index;
@@ -526,6 +526,8 @@
                 this.update_project_dialog = true;
                 this.success_project_update_raport = false;
                 this.failure_project_update_raport = false;
+                this.update_input_alert_1 = false;
+                this.update_input_alert_2 = false;
             },
             UpdateProject() {
                 if (this.update_p_title.length != 0) {
