@@ -6,14 +6,14 @@
     try {
         $connection = connect_db();
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $query = $connection->prepare("DELETE FROM project_list WHERE id=:id;");
-        $query->bindParam(':id', $data->project_id);
+        $query = $connection->prepare("DELETE FROM users WHERE id=:id;");
+        $query->bindParam(':id', $data->user_id);
         $status = $query->execute();
         if ($status) {
             echo '';
         }
         else {
-            $error = 'Nie udało się usunąć projektu. Spróbuj ponownie później.';
+            $error = 'Nie udało się usunąć użytkownika. Spróbuj ponownie później.';
             echo $error;
         }
     } catch (PDOException $e) {

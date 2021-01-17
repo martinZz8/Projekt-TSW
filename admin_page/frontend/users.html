@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+    <head>
+        <title>Panel administracyjny systemu rezerwacji projektów TSW</title>
+        <meta charset="utf-8">
+        <meta name="keywords" content="System rezerwacji projektów, System reservation, TSW, PRZ, Projekty TSW">
+        <meta name="description" content="Strona rezerwacji projektów z przedmiotu TSW - Politechnika Rzeszowska">
+        <meta name="title" content="System rezerwacji projektów TSW">
+        <link rel="shortcut icon" href="../../static/favicon.ico">
+        <link rel="stylesheet" type="text/css" href="../../styles/admin_style.css">
+        <!--Start: Vue + Vuetify-->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+        <!--End: Vue + Vuetify-->
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>-->
+        <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+        <div id="app">
+            <v-app>
+                <v-app-bar app color="#1750caed" class="app_bar" id="hamburger_menu">
+                    <v-icon>mdi-console</v-icon>
+                    <v-spacer></v-spacer>
+                    <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+                </v-app-bar>
+                <v-navigation-drawer dark v-model="drawer" temporary fixed>
+                    <v-list nav dense>
+                        <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
+                            <v-list-item style="cursor: default;">
+                                <v-list-item-title style="text-align: center; font-weight: 700; font-size: 18px;">Panel administratora</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="admin_logged_in" style="cursor: default;">
+                                <v-list-item-icon><v-icon>mdi-account</v-icon></v-list-item-icon>
+                                <v-list-item-title>Zalogowany jako:</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="admin_logged_in" style="cursor: default;">
+                                <v-list-item-title style="text-align: center;">{{admin_email}}</v-list-item-title>
+                            </v-list-item>
+                            <v-divider></v-divider>
+                            <v-list-item v-if="admin_logged_in" href="../frontend/projects.html">
+                                <v-list-item-icon><v-icon>mdi-console-line</v-icon></v-list-item-icon>
+                                <v-list-item-title>Projekty</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="admin_logged_in" href="../frontend/applications.html">
+                                <v-list-item-icon><v-icon>mdi-lead-pencil</v-icon></v-list-item-icon>
+                                <v-list-item-title>Zgłoszenia</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="admin_logged_in" href="../frontend/users.html">
+                                <v-list-item-icon><v-icon>mdi-account-group</v-icon></v-list-item-icon>
+                                <v-list-item-title>Użytkownicy</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-if="!admin_logged_in" href="../frontend/login.html">
+                                <v-list-item-icon><v-icon>mdi-login</v-icon></v-list-item-icon>
+                                <v-list-item-title>Zaloguj się!</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-else @click="LogOut()">
+                                <v-list-item-icon><v-icon>mdi-logout</v-icon></v-list-item-icon>
+                                <v-list-item-title>Wyloguj się</v-list-item-title>
+                            </v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-navigation-drawer>
+                
+                <v-app-bar app color="#1750caed" class="app_bar" id="normal_menu">
+                    <v-icon>mdi-console</v-icon>
+                    <v-row justify="start" class="ml-2">
+                        <v-col cols="auto">
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pb-1 pl-0 pr-0 pt-0">
+                                    <p style="margin: 0; font-weight: 500;">Panel</p>
+                                </v-col>
+                            </v-row>
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pb-0 pl-0 pr-0 pt-1">
+                                    <p style="margin: 0; font-weight: 500;">administracyjny</p>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
+                    <v-spacer></v-spacer>
+                    <ul class="menu_list">
+                        <li v-if="admin_logged_in">
+                            <a class="menu_list" href="../frontend/projects.html">Projekty</a>
+                        </li>
+                        <li v-if="admin_logged_in">
+                            <a class="menu_list" href="../frontend/applications.html">Zgłoszenia</a>
+                        </li>
+                        <li v-if="admin_logged_in">
+                            <a class="menu_list active" href="../frontend/users.html">Użytkownicy</a>
+                        </li>
+                        <li v-if="!admin_logged_in">
+                            <v-btn outlined elevation="3" large class="mt-2 ml-5 login" href="../frontend/login.html">Zaloguj się!</v-btn>
+                        </li>
+                        <li v-else>
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pt-3 pb-0">
+                                    <p style="margin: 0;">{{admin_email}}</p>
+                                </v-col>
+                            </v-row>
+                            <v-row justify="center">
+                                <v-col cols="auto" class="pt-2 pb-0">
+                                    <v-btn outlined elevation="3" small class="logout" @click="LogOut()">Wyloguj się</v-btn>
+                                </v-col>
+                            </v-row>
+                        </li>
+                    </ul>
+                </v-app-bar>
+
+                <v-main class="pa-0">
+                    <v-row id="bg_img_1" style="height: 400px;">
+                        <v-col clos="12">
+                            <v-row justify="center" style="padding-top: 200px;">
+                                <v-col cols="auto" class="box_shadow">
+                                    <h1>Panel zarządzania użytkownikami</h1>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
+                    <v-row v-if="admin_logged_in" style="background-color: #2b3335; min-height: 600px;">
+                        <v-col cols="12" class="mt-16 mb-16">
+                            <v-container>
+                                <v-card dark>
+                                    <v-alert v-model="success_user_delete_raport" type="success">
+                                        Pomyślnie usunięto wybranego użytkownika.
+                                        <v-btn rounded color="black" text @click="success_user_delete_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_user_delete_raport" type="error">
+                                        {{failure_user_delete_message}}
+                                        <v-btn rounded color="black" text @click="failure_user_delete_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="success_user_update_raport" type="success">
+                                        Pomyślnie zaktualizowano wybranego użytkownika.
+                                        <v-btn rounded color="black" text @click="success_user_update_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_user_update_raport" type="error">
+                                        {{failure_user_update_message}}
+                                        <v-btn rounded color="black" text @click="failure_user_update_raport=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-card-title>
+                                        Lista użytkowników
+                                        <v-spacer></v-spacer>
+                                        <v-text-field
+                                          v-model="search"
+                                          append-icon="mdi-magnify"
+                                          label="Szukaj"
+                                          single-line
+                                          hide-details
+                                        ></v-text-field>
+                                        <v-spacer></v-spacer>
+                                    </v-card-title>
+                                    <v-data-table
+                                      :headers="headers"
+                                      :items="users"
+                                      :search="search"
+                                      :items-per-page="-1"
+                                      :loading="users_loading"
+                                      no-data-text="Brak użytkowników do wyświetlenia"
+                                    >
+                                    <template v-slot:item="row">
+                                        <tr>
+                                            <td>{{row.item.id}}</td>
+                                            <td>{{row.item.email}}</td>
+                                            <td title="0-niezablokowany, 1-zablokowany">{{row.item.blocked}}</td>
+                                            <td><v-icon title="Aktualizuj użytkownika" @click="ShowUpdateForm(row.item)">mdi-pencil</v-icon></td>
+                                            <td><v-icon title="Usuń użytkownika" @click="ShowDeleteForm(row.item)">mdi-delete</v-icon></td>
+                                        </tr>
+                                    </template>
+                                    </v-data-table>
+                                </v-card>
+                                <v-dialog :loading="deleting_user" dark v-model="delete_user_dialog" max-width="450px">
+                                    <v-card>
+                                        <v-card-title class="headline">Czy na pewno chcesz usunąć konto<br>użytkownika?</v-card-title>
+                                        <v-divider></v-divider>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="red darken-1" @click="delete_user_dialog=false, selected_item_index='', selected_user_id=''">Nie</v-btn>
+                                            <v-btn color="green darken-1" @click="DeleteUser()">Tak</v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
+                                <v-dialog :loading="updating_user" dark v-model="update_user_dialog" max-width="450px">
+                                    <v-card>
+                                        <v-card-title class="headline">Wybierz blokadę użytkownika</v-card-title>
+                                        <v-divider></v-divider>
+                                        <v-container>
+                                            <v-select :items="u_blocked_list" v-model="update_u_blocked" label="Blokada użytkownika (0-niezablokowany, 1-zablokowany)"></v-select>
+                                        </v-container>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="blue darken-1" text @click="update_user_dialog=false, selected_item_index='', selected_user_id=''">Wróć</v-btn>
+                                            <v-btn color="blue darken-1" text @click="UpdateUser()">Zaktualizuj użytkownika</v-btn>
+                                        </v-card-actions>
+                                      </v-card>
+                                </v-dialog>
+                            </v-container>
+                        </v-col>
+                    </v-row>
+                    <v-row v-else justify="center" style="background-color: #2b3335; min-height: 600px;">
+                        <v-col cols="12">
+                            <v-container>
+                                <p style="color: white;">Nie masz dostępu do tej treści.</p>
+                                <p style="color: white;"><a href="../frontend/login.html">Zaloguj się</a> aby uzyskać dostęp do zawartości.</p>
+                            </v-container>
+                        </v-col>
+                    </v-row>
+                </v-main>
+                <v-footer dark padless>
+                    <v-card class="flex" flat tile>
+                        <v-card-title style="background-color: rgb(5,12,15);">
+                            <strong class="subheading">Strony systemu rezerwacji projektów TSW:</strong>
+                            <a href="../../frontend/index.html" style="margin: 0px 6px 0px 6px;">Strona główna</a>
+                            <a href="../../frontend/projects.html" style="margin: 0px 6px 0px 6px;">Projekty</a>
+                            <a href="../../frontend/my_projects.html" style="margin: 0px 6px 0px 6px;">Moje projekty</a>
+                            <a href="../../frontend/contact.html" style="margin: 0px 6px 0px 6px;">Kontakt</a>
+                            <a href="../../frontend/login.html" style="margin: 0px 6px 0px 6px;">Logowanie</a>
+                            <a href="../../frontend/register.html" style="margin: 0px 6px 0px 6px;">Rejestracja</a>
+                        </v-card-title>
+                        <v-card-text style="background-color: rgb(2,8,12);" class="py-2 white--text text-center">
+                            <strong>{{ new Date().getFullYear() }} — &copy; Maciej Harbuz</strong>
+                        </v-card-text>
+                    </v-card>
+                </v-footer>
+            </v-app>
+        </div>
+        
+<script>
+    var app = new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: {
+            drawer: false,
+            group: null,
+            admin_logged_in: false,
+            admin_email: '',
+            headers: [
+                {
+                text: 'ID',
+                align: 'start',
+                value: 'id'
+                },
+                { text: 'Email', value: 'email' },
+                { text: 'Blokada', value: 'blocked' },
+            ],
+            users: [],
+            search: '',
+            users_loading: false,
+            selected_user_id: '',
+            selected_item_index: '',
+            deleting_user: false,
+            delete_user_dialog: false,
+            success_user_delete_raport: false,
+            failure_user_delete_raport: false,
+            failure_user_delete_message: '',
+            u_blocked_list: [
+                '0',
+                '1',
+            ],
+            update_u_blocked: '0',
+            updating_user: false,
+            update_user_dialog: false,
+            success_user_update_raport: false,
+            failure_user_update_raport: false,
+            failure_user_update_message: '',
+
+        },
+        mounted: function() {
+            if (localStorage.getItem('admin_logged_in') == 'true' && localStorage.getItem('admin_email')) {
+                this.admin_logged_in = localStorage.getItem('admin_logged_in');
+                this.admin_email = localStorage.getItem('admin_email');
+            }
+            if (this.admin_logged_in) {
+                this.DownloadUsers();
+            }
+        },
+        methods: {
+            IndexOfElement (choosen_item) {
+                let obj_index = -1;
+                this.users.forEach(function (item, index) {
+                    if (choosen_item.id == item.id) {
+                        obj_index = index;
+                        return obj_index;
+                    }
+                });
+                return obj_index;
+            },
+            DownloadUsers() {
+                let comp = this;
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("GET", "../backend/get_users.php", true);
+                
+                xmlhttp.onprogress = function () {
+                    comp.users_loading = true;
+                };
+
+                xmlhttp.onload = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        comp.users = JSON.parse(this.responseText);
+                        console.log("Zwrot: ", comp.users);
+                        comp.users_loading = false;
+                    }
+                    else if (this.readyState == 4 && this.status == 0) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                        comp.users_loading = false;
+                    }
+                };
+
+                xmlhttp.onerror = function (e) {
+                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                    comp.users_loading = false;
+                };
+                
+                xmlhttp.send();
+            },
+            ShowDeleteForm(choosen_item) {
+                //Szukanie indexu elementu
+                this.selected_item_index = this.IndexOfElement(choosen_item);
+                this.selected_user_id = choosen_item.id;
+                this.delete_user_dialog = true;
+                this.success_user_delete_raport = false;
+                this.failure_user_delete_raport = false;
+            },
+            DeleteUser() {
+                let comp = this;
+                let data = {
+                    user_id: comp.selected_user_id,
+                };
+                let dataString = JSON.stringify(data);
+                console.log("Dane: ", dataString);             
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("POST", "../backend/delete_user.php");
+                xmlhttp.setRequestHeader("Content-Type", "application/json");
+                
+                xmlhttp.onprogress = function () {
+                    comp.deleting_user = true;
+                };
+
+                xmlhttp.onload = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        comp.failure_user_delete_message = this.responseText;
+                        console.log("Zwrot: ", comp.failure_user_delete_message);
+                        if (comp.failure_user_delete_message != '') {
+                            comp.failure_user_delete_raport = true;
+                            comp.delete_user_dialog = false;
+                        }
+                        else {
+                            comp.success_user_delete_raport = true;
+                            comp.delete_user_dialog = false;
+                            if (comp.selected_item_index != -1) {
+                                comp.users.splice(comp.selected_item_index, 1);
+                            }
+                        }
+                        comp.deleting_user = false;
+                        comp.selected_item_index = '';
+                        comp.selected_user_id = '';
+                    }
+                    else if (this.readyState == 4 && this.status == 0) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                        comp.deleting_user = false;
+                    }
+                };
+
+                xmlhttp.onerror = function (e) {
+                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                    comp.deleting_user = false;
+                };
+                
+                xmlhttp.send(dataString);
+            },
+            ShowUpdateForm(choosen_item) {
+                //Szukanie indexu elementu
+                this.selected_item_index = this.IndexOfElement(choosen_item);
+                this.selected_user_id = choosen_item.id;
+                this.update_u_blocked = choosen_item.blocked;
+                this.update_user_dialog = true;
+                this.success_user_update_raport = false;
+                this.failure_user_update_raport = false;
+            },
+            UpdateUser() {
+                let comp = this;
+                let data = {
+                    id: comp.selected_user_id,
+                    blocked: comp.update_u_blocked,
+                };
+
+                let dataString = JSON.stringify(data);
+                console.log("Dane: ", dataString);
+                let xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("POST", "../backend/update_user.php");
+                xmlhttp.setRequestHeader("Content-Type", "application/json");
+                
+                xmlhttp.onprogress = function () {
+                    comp.updating_user = true;
+                };
+
+                xmlhttp.onload = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        comp.failure_user_update_message = this.responseText;
+                        console.log("Zwrot: ", comp.failure_user_update_message);
+                        if (comp.failure_user_update_message != '') {
+                            comp.failure_user_update_raport = true;
+                            comp.update_user_dialog = false;
+                        }
+                        else {
+                            comp.success_user_update_raport = true;
+                            comp.update_user_dialog = false;
+                            if (comp.selected_item_index != -1) {
+                                let blocked = comp.update_u_blocked;
+                                comp.users[comp.selected_item_index].blocked = blocked;
+                            }
+                        }
+                        comp.updating_user = false;
+                        comp.selected_item_index = '';
+                        comp.selected_user_id = '';
+                    }
+                    else if (this.readyState == 4 && this.status == 0) {
+                        alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                        comp.updating_user = false;
+                    }
+                };
+
+                xmlhttp.onerror = function (e) {
+                    alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                    comp.updating_user = false;
+                };
+
+                xmlhttp.send(dataString);
+            },
+            LogOut() {
+                if (localStorage.getItem('admin_logged_in')) {
+                    localStorage.removeItem('admin_logged_in');
+                }
+                if (localStorage.getItem('admin_email')) {
+                    localStorage.removeItem('admin_email');
+                }
+                window.location.replace('../frontend/login.html');
+            }
+        }
+    });
+
+
+</script>
+    </body>
+
+</html>

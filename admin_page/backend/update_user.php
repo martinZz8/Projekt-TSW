@@ -6,14 +6,17 @@
     try {
         $connection = connect_db();
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $query = $connection->prepare("DELETE FROM project_list WHERE id=:id;");
-        $query->bindParam(':id', $data->project_id);
+        $blocked = $data->blocked;
+        $id = $data->id;
+        $query = $connection->prepare("UPDATE users SET blocked=:blocked WHERE id=:id;");
+        $query->bindParam(':blocked', $blocked);
+        $query->bindParam(':id', $id);
         $status = $query->execute();
         if ($status) {
             echo '';
         }
         else {
-            $error = 'Nie udało się usunąć projektu. Spróbuj ponownie później.';
+            $error = 'Wystąpił nieoczekiwany problem (KOD: 1). Spróbuj ponownie później.';
             echo $error;
         }
     } catch (PDOException $e) {

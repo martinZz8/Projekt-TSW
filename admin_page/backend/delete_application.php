@@ -13,7 +13,7 @@
             echo '';
         }
         else {
-            $error = 'Nie udało się usunąć zgłoszenia. Spróbuj ponownie później';
+            $error = 'Nie udało się usunąć zgłoszenia. Spróbuj ponownie później.';
             echo $error;
         }
     } catch (PDOException $e) {

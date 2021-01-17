@@ -548,7 +548,7 @@
                         xmlhttp.setRequestHeader("Content-Type", "application/json");
                         
                         xmlhttp.onprogress = function () {
-                            comp.adding_project = true;
+                            comp.updating_project = true;
                         };
 
                         xmlhttp.onload = function () {
@@ -585,7 +585,7 @@
                             }
                             else if (this.readyState == 4 && this.status == 0) {
                                 alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
-                                comp.deleting_project = false;
+                                comp.updating_project = false;
                             }
                         };
 

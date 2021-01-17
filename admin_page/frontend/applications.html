@@ -262,30 +262,6 @@
                                             Podano zbyt długie nazwisko.
                                             <v-btn rounded color="black" text @click="update_input_alert_6=false">OK</v-btn>
                                         </v-alert>
-                                        <v-alert v-model="add_input_alert_1" type="error">
-                                            Wybierz użytkownika z listy.
-                                            <v-btn rounded color="black" text @click="add_input_alert_1=false">OK</v-btn>
-                                        </v-alert>
-                                        <v-alert v-model="add_input_alert_2" type="error">
-                                            Podaj imię.
-                                            <v-btn rounded color="black" text @click="add_input_alert_2=false">OK</v-btn>
-                                        </v-alert>
-                                        <v-alert v-model="add_input_alert_3" type="error">
-                                            Podaj nazwisko.
-                                            <v-btn rounded color="black" text @click="add_input_alert_3=false">OK</v-btn>
-                                        </v-alert>
-                                        <v-alert v-model="add_input_alert_4" type="error">
-                                            Wybierz projekt z listy.
-                                            <v-btn rounded color="black" text @click="add_input_alert_4=false">OK</v-btn>
-                                        </v-alert>
-                                        <v-alert v-model="add_input_alert_5" type="error">
-                                            Podano zbyt długie imię.
-                                            <v-btn rounded color="black" text @click="add_input_alert_5=false">OK</v-btn>
-                                        </v-alert>
-                                        <v-alert v-model="add_input_alert_6" type="error">
-                                            Podano zbyt długie nazwisko.
-                                            <v-btn rounded color="black" text @click="add_input_alert_6=false">OK</v-btn>
-                                        </v-alert>
                                         <v-card-title class="headline">Podaj dane aplikacji</v-card-title>
                                         <v-divider></v-divider>
                                         <v-container>
@@ -296,7 +272,7 @@
                                         </v-container>
                                         <v-card-actions>
                                             <v-spacer></v-spacer>
-                                            <v-btn color="blue darken-1" text @click="update_application_dialog=false">Wróć</v-btn>
+                                            <v-btn color="blue darken-1" text @click="update_application_dialog=false, selected_item_index='', selected_application_id=''">Wróć</v-btn>
                                             <v-btn color="blue darken-1" text @click="UpdateApplication()">Zaktualizuj aplikację</v-btn>
                                         </v-card-actions>
                                       </v-card>
@@ -700,7 +676,6 @@
                 
                 xmlhttp.send(dataString);
             },
-            
             ShowUpdateForm(choosen_item) {
                 //Szukanie indexu elementu
                 this.selected_item_index = this.IndexOfElement(choosen_item);
