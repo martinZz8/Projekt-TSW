@@ -107,7 +107,7 @@
                 </v-app-bar>
 
                 <v-main class="pa-0">
-                    <v-row id="bg_img_1" style="height: 400px;">
+                    <v-row id="bg_img_1" style="min-height: 400px;">
                         <v-col clos="12">
                             <v-row justify="center" style="padding-top: 200px;">
                                 <v-col cols="auto" class="box_shadow">
@@ -116,10 +116,77 @@
                             </v-row>
                         </v-col>
                     </v-row>
-                    <v-row style="background-color: #2b3335; min-height: 600px;">
+                    <v-row style="background-color: #2b3335; min-height: 620px;">
                         <v-col cols="12">
                             <v-container>
-                                <p style="color: white;">Tutaj wstaw treść strony głównej.</p>
+                                <v-row align="center" justify="center" style="padding-top: 120px;">
+                                    <v-col cols="auto">
+                                        <h2>Witaj w systemie rezerwacji projektów!</h2>
+                                    </v-col>
+                                </v-row>
+                                <v-row class="pt-2" justify="center">
+                                    <v-col cols="11" xs="11" sm="11" md="8" lg="6" xl="6">
+                                        <p class="text">W tym systemie będziesz miał/a możliwość wybrać swój projekt z przedmiotu TSW bądź TSWiJ. Jedynym warunkiem jest wcześniejsze założenie konta na tej witrynie.<br><br>Lista projektów znajduje się w zakładce "Projekty". Istnieje również możliwość aplikowania do wymyślonego przez siebie projektu. Pamiętaj jednak, aby wymyślony przez siebie temat projektu uzgodnić z prowadzącym.</p>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-col>
+                    </v-row>
+                    <v-row id="bg_img_2" style="min-height: 400px;">
+                    </v-row>
+                    <v-row style="background-color: #2b3335; min-height: 650px;">
+                        <v-col cols="12">
+                            <v-container>
+                                <v-row class="pt-5" align="center" justify="center">
+                                    <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
+                                        <div class="display-2" style="color: white;">
+                                            Poznaj listę najpopularniejszych frameworków JavaScript!
+                                        </div>
+                                    </v-col>
+                                    <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
+                                        <v-carousel cycle show-arrows-on-hover>
+                                            <v-carousel-item
+                                            v-for="(item,i) in carousel_items1"
+                                            :key="i"
+                                            :src="item.src">
+                                                <v-row align="center" justify="center" style="padding-top: 20px;">
+                                                    <div class="display-2">
+                                                        {{ item.name }}
+                                                    </div>
+                                                </v-row>
+                                            </v-carousel-item>
+                                        </v-carousel>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-col>
+                    </v-row>
+                    <v-row id="bg_img_3" style="min-height: 400px;">
+                    </v-row>
+                    <v-row style="background-color: #2b3335; min-height: 650px;">
+                        <v-col cols="12">
+                            <v-container>
+                                <v-row class="pt-5" align="center" justify="center">
+                                    <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
+                                        <div class="display-2" style="color: white;">
+                                            Poznaj listę najpopularniejszych frameworków PHP!
+                                        </div>
+                                    </v-col>
+                                    <v-col cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
+                                        <v-carousel cycle show-arrows-on-hover>
+                                            <v-carousel-item
+                                            v-for="(item,i) in carousel_items2"
+                                            :key="i"
+                                            :src="item.src">
+                                                <v-row align="center" justify="center" style="padding-top: 20px;">
+                                                    <div class="display-2">
+                                                        {{ item.name }}
+                                                    </div>
+                                                </v-row>
+                                            </v-carousel-item>
+                                        </v-carousel>
+                                    </v-col>
+                                </v-row>
                             </v-container>
                         </v-col>
                     </v-row>
@@ -159,6 +226,50 @@
             group: null,
             logged_in: false,
             user_email: '',
+            carousel_items1: [
+                {
+                    src: '../static/logos/logo_react.png',
+                    name: 'React.js',
+                },
+                {
+                    src: '../static/logos/logo_angular.png',
+                    name: 'Angular.js',
+                },
+                {
+                    src: '../static/logos/logo_bootstrap.png',
+                    name: 'Bootstrap',
+                },
+                {
+                    src: '../static/logos/logo_vue.png',
+                    name: 'Vue.js',
+                },
+                {
+                    src: '../static/logos/logo_vuetify.png',
+                    name: 'Vuetify.js',
+                },
+                {
+                    src: '../static/logos/logo_express.png',
+                    name: 'Express.js',
+                },
+            ],
+            carousel_items2: [
+                {
+                    src: '../static/logos/logo_laravel.jpg',
+                    name: 'Laravel',
+                },
+                {
+                    src: '../static/logos/logo_codeigniter.png',
+                    name: 'CodeIgniter',
+                },
+                {
+                    src: '../static/logos/logo_symfony.png',
+                    name: 'Symfony',
+                },
+                {
+                    src: '../static/logos/logo_cakephp.png',
+                    name: 'CakePHP',
+                },
+            ],
 
         },
         mounted: function() {

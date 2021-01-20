@@ -107,7 +107,7 @@
                 </v-app-bar>
 
                 <v-main class="pa-0">
-                    <v-row id="bg_img_1" style="height: 400px;">
+                    <v-row id="bg_img_1" style="min-height: 400px;">
                         <v-col clos="12">
                             <v-row justify="center" style="padding-top: 200px;">
                                 <v-col cols="auto" class="box_shadow">
@@ -119,7 +119,21 @@
                     <v-row style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="12">
                             <v-container>
-                                <p style="color: white;">Tutaj wstaw treść strony kontaktu.</p>
+                                <v-row justify="center">
+                                    <v-col cols="11" xs="11" sm="8" md="7" ld="4" xl="4">
+                                        <v-card dark class="mt-5">
+                                            <v-card-title class="justify-center" style="font-size: 25px;">Jan Prokop</v-card-title>
+                                            <v-card-subtitle class="text-center" style="font-size: 15px">Dr hab inż. prof. PRZ</v-card-subtitle>
+                                            <v-divider></v-divider>
+                                            <v-card-text class="contact_text">Wydział Elektrotechniki i Informatyki</v-card-text>
+                                            <v-card-text class="contact_text">ul. W. Pola 2 (bud. B, pok. 101)</v-card-text>
+                                            <v-card-text class="contact_text">35-959 Rzeszów</v-card-text>
+                                            <v-card-text class="contact_text"><strong>Telefon: </strong>+48 17 865 13 84</v-card-text>
+                                            <v-card-text class="contact_text"><strong>E-mail: </strong><a href="mailto:jprokop@prz.edu.pl">jprokop@prz.edu.pl</a></v-card-text>
+                                            <v-card-text class="contact_text" style="padding-bottom: 16px!important;"><strong>WWW: </strong><a href="http://jprokop.prz.edu.pl">http://jprokop.prz.edu.pl</a></v-card-text>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
                             </v-container>
                         </v-col>
                     </v-row>

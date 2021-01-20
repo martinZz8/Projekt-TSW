@@ -44,7 +44,7 @@ p.h_menu_item
 }
 #bg_img_1
 {
-    background: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ), url('../static/bg1.jpg');
+    background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url('../static/bg1.jpg');
     -webkit-background-size: cover;
     -moz-background-size:  cover;
     background-position: center;

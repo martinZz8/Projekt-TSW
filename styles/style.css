@@ -44,7 +44,31 @@ p.h_menu_item
 }
 #bg_img_1
 {
-    background: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ), url('../static/bg1.jpg');
+    background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url('../static/bg1.jpg');
+    -webkit-background-size: cover;
+    -moz-background-size:  cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    top: 0;
+    left: 0;
+    background-attachment: fixed;
+}
+#bg_img_2
+{
+    background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url('../static/bg2.png');
+    -webkit-background-size: cover;
+    -moz-background-size:  cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    top: 0;
+    left: 0;
+    background-attachment: fixed;
+}
+#bg_img_3
+{
+    background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url('../static/bg3.png');
     -webkit-background-size: cover;
     -moz-background-size:  cover;
     background-position: center;
@@ -62,6 +86,25 @@ p.h_menu_item
 h1
 {
     color: white;
+}
+h2
+{
+    color: white;
+    font-size: 30px;
+    border-bottom: solid 2px white;
+}
+p.text
+{
+    color: white;
+    text-align: justify;
+    font-size: 20px;
+}
+.contact_text
+{
+    color: azure !important;
+    text-align: center;
+    font-size: 18px !important;
+    padding-bottom: 5px !important;
 }
 #hamburger_menu
 {
