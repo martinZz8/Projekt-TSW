@@ -33,7 +33,7 @@
                     <v-list nav dense>
                         <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
                             <v-list-item style="cursor: default;">
-                                <v-list-item-title style="text-align: center; font-weight: 700; font-size: 18px;">Panel administratora</v-list-item-title>
+                                <v-list-item-title style="text-align: center; font-weight: 700; font-size: 18px;">Panel administracyjny</v-list-item-title>
                             </v-list-item>
                             <v-list-item v-if="admin_logged_in" style="cursor: default;">
                                 <v-list-item-icon><v-icon>mdi-account</v-icon></v-list-item-icon>
@@ -76,7 +76,7 @@
                                     <p style="margin: 0; font-weight: 500;">Panel</p>
                                 </v-col>
                             </v-row>
-                            <v-row justify="center">
+                            <v-row class="mt-0" justify="center">
                                 <v-col cols="auto" class="pb-0 pl-0 pr-0 pt-1">
                                     <p style="margin: 0; font-weight: 500;">administracyjny</p>
                                 </v-col>
@@ -103,7 +103,7 @@
                                     <p style="margin: 0;">{{admin_email}}</p>
                                 </v-col>
                             </v-row>
-                            <v-row justify="center">
+                            <v-row class="mt-0" justify="center">
                                 <v-col cols="auto" class="pt-2 pb-0">
                                     <v-btn outlined elevation="3" small class="logout" @click="LogOut()">Wyloguj się</v-btn>
                                 </v-col>
@@ -176,6 +176,7 @@
                                             <td>{{row.item.topic}}</td>
                                             <td>{{row.item.description}}</td>
                                             <td>{{row.item.technologies}}</td>
+                                            <td>{{row.item.select_counter}}</td>
                                             <td title="0-niezablokowany, 1-zablokowany">{{row.item.blocked}}</td>
                                             <td><v-icon title="Aktualizuj projekt" @click="ShowUpdateForm(row.item)">mdi-pencil</v-icon></td>
                                             <td><v-icon title="Usuń projekt" @click="ShowDeleteForm(row.item)">mdi-delete</v-icon></td>
@@ -293,6 +294,7 @@
                 { text: 'Temat', value: 'topic' },
                 { text: 'Opis', value: 'description' },
                 { text: 'Technologie', value: 'technologies' },
+                { text: 'Liczba zgłoszeń', value: 'select_counter' },
                 { text: 'Blokada', value: 'blocked' }
             ],
             projects: [],
@@ -427,13 +429,14 @@
                                     let description = comp.add_p_description;
                                     let technologies = comp.add_p_technologies;
                                     let blocked = comp.add_p_blocked;
+                                    let select_counter = "0";
                                     if (comp.add_p_description == '') {
                                         description = 'Brak opisu.';
                                     }
                                     if (comp.add_p_technologies == '') {
                                         technologies = 'Brak wybranych technologii.';
                                     }
-                                    comp.projects.push({id: id, topic: title, description: description, technologies: technologies, blocked: blocked});
+                                    comp.projects.push({id: id, topic: title, description: description, technologies: technologies, blocked: blocked, select_counter: select_counter});
                                 }
                                 comp.adding_project = false;
                             }

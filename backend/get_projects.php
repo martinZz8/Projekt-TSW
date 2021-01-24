@@ -4,7 +4,7 @@
     try {
         $connection = connect_db();
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $query = $connection->prepare("SELECT id, topic, description, technologies FROM project_list WHERE blocked=0;");
+        $query = $connection->prepare("SELECT p.id, p.topic, p.description, p.technologies, COUNT(s.id) FROM project_list p LEFT JOIN submitted_projects s ON p.id=s.project_id WHERE p.blocked=0 GROUP BY p.id;");
         $query->execute();
         $result = $query->setFetchMode(PDO::FETCH_ASSOC);
         $i = 0;
@@ -13,7 +13,8 @@
                 "id" => $row['id'],
                 "topic" => $row['topic'],
                 "description" => $row['description'],
-                "technologies" => $row['technologies']
+                "technologies" => $row['technologies'],
+                "select_counter" => $row['COUNT(s.id)']
             );
             $i = $i + 1;
         }

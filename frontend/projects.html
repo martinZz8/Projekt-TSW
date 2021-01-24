@@ -96,7 +96,7 @@
                                     <p style="margin: 0;">{{user_email}}</p>
                                 </v-col>
                             </v-row>
-                            <v-row justify="center">
+                            <v-row class="mt-0" justify="center">
                                 <v-col cols="auto" class="pt-2 pb-0">
                                     <v-btn outlined elevation="3" small class="logout" @click="LogOut()">Wyloguj się</v-btn>
                                 </v-col>
@@ -156,6 +156,7 @@
                                             <td>{{row.item.topic}}</td>
                                             <td>{{row.item.description}}</td>
                                             <td>{{row.item.technologies}}</td>
+                                            <td>{{row.item.select_counter}}</td>
                                             <td>
                                                 <v-btn small color="#3949AB" @click="ShowForm(row.item)">Wybierz</v-btn>
                                             </td>
@@ -273,7 +274,8 @@
                 value: 'topic'
                 },
                 { text: 'Opis', value: 'description' },
-                { text: 'Technologie', value: 'technologies' }
+                { text: 'Technologie', value: 'technologies' },
+                { text: 'Liczba zgłoszeń', value: 'select_counter' }
             ],
             projects: [],
             search: '',
@@ -306,6 +308,16 @@
             }
         },
         methods: {
+            IndexOfElement (choosen_item_id) {
+                let obj_index = -1;
+                this.projects.forEach(function (item, index) {
+                    if (choosen_item_id == item.id) {
+                        obj_index = index;
+                        return obj_index;
+                    }
+                });
+                return obj_index;
+            },
             LogOut() {
                 if (localStorage.getItem('logged_in')) {
                     localStorage.removeItem('logged_in');
@@ -385,6 +397,8 @@
                                 comp.submit_dialog = false;
                             }
                             else {
+                                let index = comp.IndexOfElement(comp.selected_project_id);
+                                comp.projects[index].select_counter = (parseInt(comp.projects[index].select_counter) + 1).toString();
                                 comp.selected_project_id = null;
                                 comp.success_raport1 = true;
                                 comp.submit_dialog = false;
