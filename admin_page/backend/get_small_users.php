@@ -4,9 +4,7 @@
     try {
         $connection = connect_db();
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $blocked = "0";
-        $query = $connection->prepare("SELECT id, email FROM users WHERE blocked=:blocked;");
-        $query->bindParam(':blocked', $blocked);
+        $query = $connection->prepare("SELECT id, email FROM users;");
         $query->execute();
         $result = $query->setFetchMode(PDO::FETCH_ASSOC);
         $i = 0;
