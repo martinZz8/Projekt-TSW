@@ -288,7 +288,7 @@
                     email: comp.user_email,
                 };
                 let dataString = JSON.stringify(data);
-                console.log("Dane: ", dataString);             
+                console.log("Dane: ", dataString);
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.open("POST", "../backend/leave_project.php");
                 xmlhttp.setRequestHeader("Content-Type", "application/json");
