@@ -238,10 +238,6 @@
                                 </v-dialog>
                                 <v-dialog :loading="updating_application" dark v-model="update_application_dialog" max-width="500px">
                                     <v-card>
-                                        <v-alert v-model="update_input_alert_1" type="error">
-                                            Wybierz użytkownika z listy.
-                                            <v-btn rounded color="black" text @click="update_input_alert_1=false">OK</v-btn>
-                                        </v-alert>
                                         <v-alert v-model="update_input_alert_2" type="error">
                                             Podaj imię.
                                             <v-btn rounded color="black" text @click="update_input_alert_2=false">OK</v-btn>
@@ -265,7 +261,7 @@
                                         <v-card-title class="headline">Podaj dane aplikacji</v-card-title>
                                         <v-divider></v-divider>
                                         <v-container>
-                                            <v-select :items="users_list" v-model="update_a_email" label="Email użytkownika"></v-select>
+                                            <p>Email użytkownika: {{ update_a_email }}</p>
                                             <v-textarea rows="1" :rules="[v => v.length <= 25 || 'Maksymalnie 25 znaków']" auto-grow counter v-model="update_a_first_name" label="Imię"></v-textarea>
                                             <v-textarea rows="1" :rules="[v => v.length <= 35 || 'Maksymalnie 35 znaków']" auto-grow counter v-model="update_a_second_name" label="Nazwisko"></v-textarea>
                                             <v-select :items="projects_list" v-model="update_a_project" label="Projekt"></v-select>
@@ -361,7 +357,6 @@
             success_application_update_raport: false,
             failure_application_update_raport: false,
             failure_application_update_message: '',
-            update_input_alert_1: false,
             update_input_alert_2: false,
             update_input_alert_3: false,
             update_input_alert_4: false,
@@ -656,6 +651,7 @@
                             comp.success_application_delete_raport = true;
                             comp.delete_application_dialog = false;
                             if (comp.selected_item_index != -1) {
+                                comp.users_list.push(comp.applications[comp.selected_item_index].email);
                                 comp.applications.splice(comp.selected_item_index, 1);
                             }
                         }
@@ -689,101 +685,92 @@
                 this.failure_application_update_raport = false;
             },
             UpdateApplication() {
-                if (this.update_a_email != '') {
-                    if (this.update_a_first_name != '') {
-                        if (this.update_a_second_name != '') {
-                            if (this.update_a_project != '') {
-                                if (this.update_a_first_name.length <= 25) {
-                                    if (this.update_a_second_name.length <= 35) {
-                                        let comp = this;
-                                        let data = {
-                                            id: comp.selected_application_id,
-                                            email: comp.update_a_email,
-                                            first_name: comp.update_a_first_name,
-                                            second_name: comp.update_a_second_name,
-                                            project_id: comp.GetIdFromString(comp.update_a_project),
-                                        };
+                if (this.update_a_first_name != '') {
+                    if (this.update_a_second_name != '') {
+                        if (this.update_a_project != '') {
+                            if (this.update_a_first_name.length <= 25) {
+                                if (this.update_a_second_name.length <= 35) {
+                                    let comp = this;
+                                    let data = {
+                                        id: comp.selected_application_id,
+                                        first_name: comp.update_a_first_name,
+                                        second_name: comp.update_a_second_name,
+                                        project_id: comp.GetIdFromString(comp.update_a_project),
+                                    };
 
-                                        let dataString = JSON.stringify(data);
-                                        console.log("Dane: ", dataString);
-                                        let xmlhttp = new XMLHttpRequest();
-                                        xmlhttp.open("POST", "../backend/update_application.php");
-                                        xmlhttp.setRequestHeader("Content-Type", "application/json");
-                                        
-                                        xmlhttp.onprogress = function () {
-                                            comp.updating_application = true;
-                                        };
+                                    let dataString = JSON.stringify(data);
+                                    console.log("Dane: ", dataString);
+                                    let xmlhttp = new XMLHttpRequest();
+                                    xmlhttp.open("POST", "../backend/update_application.php");
+                                    xmlhttp.setRequestHeader("Content-Type", "application/json");
+                                    
+                                    xmlhttp.onprogress = function () {
+                                        comp.updating_application = true;
+                                    };
 
-                                        xmlhttp.onload = function () {
-                                            if (this.readyState == 4 && this.status == 200) {
-                                                comp.failure_application_update_message = this.responseText;
-                                                console.log("Zwrot: ", comp.failure_application_update_message);
-                                                if (comp.failure_application_update_message != '') {
-                                                    comp.failure_application_update_raport = true;
-                                                    comp.update_application_dialog = false;
-                                                }
-                                                else {
-                                                    comp.success_application_update_raport = true;
-                                                    comp.update_application_dialog = false;
-                                                    let email = comp.update_a_email;
-                                                    let first_name = comp.update_a_first_name;
-                                                    let second_name = comp.update_a_second_name;
-                                                    let project_id = comp.GetIdFromString(comp.update_a_project);
-                                                    let topic = comp.GetTopicFromString(comp.update_a_project);
-
-                                                    comp.applications[comp.selected_item_index].email = email;
-                                                    comp.applications[comp.selected_item_index].first_name = first_name;
-                                                    comp.applications[comp.selected_item_index].second_name = second_name;
-                                                    comp.applications[comp.selected_item_index].project_id = project_id;
-                                                    comp.applications[comp.selected_item_index].topic = topic;
-                                                }
-                                                comp.updating_application = false;
-                                                comp.selected_item_index = '';
-                                                comp.selected_application_id = '';
+                                    xmlhttp.onload = function () {
+                                        if (this.readyState == 4 && this.status == 200) {
+                                            comp.failure_application_update_message = this.responseText;
+                                            console.log("Zwrot: ", comp.failure_application_update_message);
+                                            if (comp.failure_application_update_message != '') {
+                                                comp.failure_application_update_raport = true;
+                                                comp.update_application_dialog = false;
                                             }
-                                            else if (this.readyState == 4 && this.status == 0) {
-                                                alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
-                                                comp.updating_application = false;
-                                            }
-                                        };
+                                            else {
+                                                comp.success_application_update_raport = true;
+                                                comp.update_application_dialog = false;
+                                                let first_name = comp.update_a_first_name;
+                                                let second_name = comp.update_a_second_name;
+                                                let project_id = comp.GetIdFromString(comp.update_a_project);
+                                                let topic = comp.GetTopicFromString(comp.update_a_project);
 
-                                        xmlhttp.onerror = function (e) {
-                                            alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                                                comp.applications[comp.selected_item_index].first_name = first_name;
+                                                comp.applications[comp.selected_item_index].second_name = second_name;
+                                                comp.applications[comp.selected_item_index].project_id = project_id;
+                                                comp.applications[comp.selected_item_index].topic = topic;
+                                            }
                                             comp.updating_application = false;
-                                        };
+                                            comp.selected_item_index = '';
+                                            comp.selected_application_id = '';
+                                        }
+                                        else if (this.readyState == 4 && this.status == 0) {
+                                            alert("Podczas pobierania dokumentu wystąpił błąd " + this.responseText + ".");
+                                            comp.updating_application = false;
+                                        }
+                                    };
 
-                                        xmlhttp.send(dataString);
-                                        
-                                        this.update_input_alert_1 = false;
-                                        this.update_input_alert_2 = false;
-                                        this.update_input_alert_3 = false;
-                                        this.update_input_alert_4 = false;
-                                        this.update_input_alert_5 = false;
-                                        this.update_input_alert_6 = false;
-                                    }
-                                    else {
-                                        this.update_input_alert_6 = true;
-                                    }
+                                    xmlhttp.onerror = function (e) {
+                                        alert("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");
+                                        comp.updating_application = false;
+                                    };
+
+                                    xmlhttp.send(dataString);
+                                    
+                                    this.update_input_alert_2 = false;
+                                    this.update_input_alert_3 = false;
+                                    this.update_input_alert_4 = false;
+                                    this.update_input_alert_5 = false;
+                                    this.update_input_alert_6 = false;
                                 }
                                 else {
-                                    this.update_input_alert_5 = true; 
+                                    this.update_input_alert_6 = true;
                                 }
                             }
                             else {
-                                this.update_input_alert_4 = true;
+                                this.update_input_alert_5 = true; 
                             }
                         }
                         else {
-                            this.update_input_alert_3 = true;
+                            this.update_input_alert_4 = true;
                         }
                     }
                     else {
-                        this.update_input_alert_2 = true;
+                        this.update_input_alert_3 = true;
                     }
                 }
                 else {
-                    this.update_input_alert_1 = true;
-                }
+                    this.update_input_alert_2 = true;
+                }    
             },
             LogOut() {
                 if (localStorage.getItem('admin_logged_in')) {
