@@ -133,8 +133,8 @@
                                 <v-card-title class="headline">Dane logowania do konta</v-card-title>
                                 <v-divider></v-divider>
                                 <v-container>
-                                    <v-text-field v-model="input_user_email" label="Email"></v-text-field>
-                                    <v-text-field v-model="input_user_password" label="Hasło" type="password"></v-text-field>
+                                    <v-text-field v-model="input_user_email" label="Email" @keyup.enter="LogIn()"></v-text-field>
+                                    <v-text-field v-model="input_user_password" label="Hasło" type="password" @keyup.enter="LogIn()"></v-text-field>
                                 </v-container>
                                 <v-card-actions>
                                     <p style="margin-bottom: 0px; margin-left: 8px;">Nie masz konta? <a href="../frontend/register.html">Zarejestruj się!</a></p>
@@ -278,7 +278,6 @@
             }
         }
     });
-
 
 </script>
     </body>

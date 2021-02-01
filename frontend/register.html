@@ -145,9 +145,9 @@
                                 <v-card-title class="headline">Podaj dane do rejestracji</v-card-title>
                                 <v-divider></v-divider>
                                 <v-container>
-                                    <v-text-field v-model="input_user_email" label="Email"></v-text-field>
-                                    <v-text-field v-model="input_user_password" label="Hasło" type="password"></v-text-field>
-                                    <v-text-field v-model="input_user_password2" label="Powtórzone hasło" type="password"></v-text-field>
+                                    <v-text-field v-model="input_user_email" label="Email" @keyup.enter="RegisterAccount()"></v-text-field>
+                                    <v-text-field v-model="input_user_password" label="Hasło" type="password" @keyup.enter="RegisterAccount()"></v-text-field>
+                                    <v-text-field v-model="input_user_password2" label="Powtórzone hasło" type="password" @keyup.enter="RegisterAccount()"></v-text-field>
                                     <v-checkbox v-model="agree_checkbox" color="green" :error="error_checkbox" @click="error_checkbox = false" :label="'Wyrażam zgodę na przetwarzanie podanych przeze mnie danych w celu rejestracji konta na tej witrynie.'"></v-checkbox>
                                 </v-container>
                                 <v-card-actions>

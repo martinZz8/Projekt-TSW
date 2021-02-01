@@ -140,8 +140,8 @@
                                 <v-card-title class="headline">Dane logowania do konta<br>administratora</v-card-title>
                                 <v-divider></v-divider>
                                 <v-container>
-                                    <v-text-field v-model="input_admin_email" label="Email"></v-text-field>
-                                    <v-text-field v-model="input_admin_password" label="Hasło" type="password"></v-text-field>
+                                    <v-text-field v-model="input_admin_email" label="Email" @keyup.enter="LogIn()"></v-text-field>
+                                    <v-text-field v-model="input_admin_password" label="Hasło" type="password" @keyup.enter="LogIn()"></v-text-field>
                                 </v-container>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
