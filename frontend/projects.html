@@ -173,8 +173,8 @@
                                         <v-card-title class="headline">Podaj swoje dane</v-card-title>
                                         <v-divider></v-divider>
                                         <v-container>
-                                            <v-text-field v-model="first_name" label="Imię"></v-text-field>
-                                            <v-text-field v-model="second_name" label="Nazwisko"></v-text-field>
+                                            <v-text-field v-model="first_name" label="Imię" @keyup.enter="ReportParticipation()"></v-text-field>
+                                            <v-text-field v-model="second_name" label="Nazwisko" @keyup.enter="ReportParticipation()"></v-text-field>
                                         </v-container>
                                         <v-card-actions>
                                             <v-spacer></v-spacer>
