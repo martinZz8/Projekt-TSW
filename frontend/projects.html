@@ -115,7 +115,7 @@
                             </v-row>
                         </v-col>
                     </v-row>
-                    <v-row v-if="logged_in" style="background-color: #2b3335; min-height: 600px;">
+                    <v-row style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="12" class="mt-16 mb-16">
                             <v-container>
                                 <v-card dark>
@@ -141,7 +141,8 @@
                                           single-line
                                           hide-details
                                         ></v-text-field>
-                                        <v-btn color="green" class="smartphone_block" @click="ShowForm2()">Dodaj własny projekt</v-btn>
+                                        <v-btn v-if="logged_in" color="green" class="smartphone_block" @click="ShowForm2()">Dodaj własny projekt</v-btn>
+                                        <v-btn v-else color="green" class="smartphone_block" href="../frontend/login.html">Zaloguj się aby wybrać projekt</v-btn>
                                     </v-card-title>
                                     <v-data-table
                                       :headers="headers"
@@ -158,7 +159,7 @@
                                             <td>{{row.item.technologies}}</td>
                                             <td>{{row.item.select_counter}}</td>
                                             <td>
-                                                <v-btn small color="#3949AB" @click="ShowForm(row.item)">Wybierz</v-btn>
+                                                <v-btn v-if="logged_in" small color="#3949AB" @click="ShowForm(row.item)">Wybierz</v-btn>
                                             </td>
                                         </tr>
                                     </template>
@@ -217,15 +218,6 @@
                                         </v-card-actions>
                                       </v-card>
                                 </v-dialog>
-                            </v-container>
-                        </v-col>
-                    </v-row>
-                    <v-row v-else justify="center" style="background-color: #2b3335; min-height: 600px;">
-                        <v-col cols="12">
-                            <v-container>
-                                <p style="color: white;">Nie masz dostępu do tej treści.</p>
-                                <p style="color: white;"><a href="../frontend/login.html">Zaloguj się</a> aby uzyskać dostęp do zawartości.</p>
-                                <p style="color: white;">Nie masz konta? <a href="../frontend/register.html">Zarejestruj się!</a></p>
                             </v-container>
                         </v-col>
                     </v-row>
@@ -303,9 +295,7 @@
                 this.user_email = localStorage.getItem('user_email');
             }
 
-            if (this.logged_in) {
-                this.DownloadProjects();
-            }
+            this.DownloadProjects();
         },
         methods: {
             IndexOfElement (choosen_item_id) {
