@@ -150,6 +150,14 @@
                                         {{failure_application_update_message}}
                                         <v-btn rounded color="black" text @click="failure_application_update_raport=false">OK</v-btn>
                                     </v-alert>
+                                    <v-alert v-model="failure_download_exeption" type="error">
+                                        Nie udało się pobrać aplikacji. Spróbuj ponownie później.<br>{{failure_message}}
+                                        <v-btn rounded color="black" text @click="failure_download_exeption=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_application_add_raport_exeption" type="error">
+                                        Nie udało się dodać aplikacji. Spróbuj ponownie później.<br>{{failure_message}}
+                                        <v-btn rounded color="black" text @click="failure_application_add_raport_exeption=false">OK</v-btn>
+                                    </v-alert>
                                     <v-card-title>
                                         Lista zgłoszeń
                                         <v-spacer></v-spacer>
@@ -366,6 +374,9 @@
             update_a_first_name: '',
             update_a_second_name: '',
             update_a_project: '',
+            failure_message: '',
+            failure_download_exeption: false,
+            failure_application_add_raport_exeption: false,
             
         },
         mounted: function() {
@@ -433,8 +444,17 @@
 
                 xmlhttp.onload = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        comp.applications = JSON.parse(this.responseText);
-                        console.log("Zwrot: ", comp.applications);
+                        response = JSON.parse(this.responseText);
+                        console.log("Zwrot: ", response);
+                        if (response.length > 0) {
+                            if (response[0].hasOwnProperty("exeption_error")){
+                                comp.failure_message = response[0].exeption_error;
+                                comp.failure_download_exeption = true;
+                            }
+                            else {
+                                comp.applications = response;
+                            }
+                        }
                         comp.applications_loading = false;
                     }
                     else if (this.readyState == 4 && this.status == 0) {
@@ -463,10 +483,14 @@
                     if (this.readyState == 4 && this.status == 200) {
                         let response = JSON.parse(this.responseText);
                         console.log("Zwrot users: ", response);
-                        for (let i=0; i<response.length; i++) {
-                            comp.users_list.push(response[i].email);
+                        if (response.length > 0) {
+                            if (!response[0].hasOwnProperty("exeption_error")){
+                                for (let i=0; i<response.length; i++) {
+                                    comp.users_list.push(response[i].email);
+                                }
+                                console.log("users_list: ",comp.users_list);
+                            }
                         }
-                        console.log("users_list: ",comp.users_list);
                         comp.applications_loading = false;
                     }
                     else if (this.readyState == 4 && this.status == 0) {
@@ -495,10 +519,14 @@
                     if (this.readyState == 4 && this.status == 200) {
                         let response = JSON.parse(this.responseText);
                         console.log("Zwrot projects: ", response);
-                        for (let i=0; i<response.length; i++) {
-                            comp.projects_list.push(response[i].id+" - "+response[i].topic);
+                        if (response.length > 0) {
+                            if (!response[0].hasOwnProperty("exeption_error")){
+                                for (let i=0; i<response.length; i++) {
+                                    comp.projects_list.push(response[i].id+" - "+response[i].topic);
+                                }
+                                console.log("projects_list: ",comp.projects_list);
+                            }
                         }
-                        console.log("projects_list: ",comp.projects_list);
                         comp.applications_loading = false;
                     }
                     else if (this.readyState == 4 && this.status == 0) {
@@ -554,21 +582,28 @@
                                             if (this.readyState == 4 && this.status == 200) {
                                                 let response = JSON.parse(this.responseText);
                                                 console.log("Zwrot: ", response);
-                                                comp.failure_application_add_message = response.error;
-                                                if (comp.failure_application_add_message != '') {
-                                                    comp.failure_application_add_raport = true;
+                                                if (response.hasOwnProperty("exeption_error")){
+                                                    comp.failure_message = response.exeption_error;
+                                                    comp.failure_application_add_raport_exeption = true;
                                                     comp.add_application_dialog = false;
                                                 }
                                                 else {
-                                                    comp.success_application_add_raport = true;
-                                                    comp.add_application_dialog = false;
-                                                    let id = response.added_application_id;
-                                                    let email = comp.add_a_email;
-                                                    let first_name = comp.add_a_first_name;
-                                                    let second_name = comp.add_a_second_name;
-                                                    let project_id = comp.GetIdFromString(comp.add_a_project);
-                                                    let topic = response.added_application_p_topic;
-                                                    comp.applications.push({id: id, email: email, first_name: first_name, second_name: second_name, project_id: project_id, topic: topic});
+                                                    comp.failure_application_add_message = response.error;
+                                                    if (comp.failure_application_add_message != '') {
+                                                        comp.failure_application_add_raport = true;
+                                                        comp.add_application_dialog = false;
+                                                    }
+                                                    else {
+                                                        comp.success_application_add_raport = true;
+                                                        comp.add_application_dialog = false;
+                                                        let id = response.added_application_id;
+                                                        let email = comp.add_a_email;
+                                                        let first_name = comp.add_a_first_name;
+                                                        let second_name = comp.add_a_second_name;
+                                                        let project_id = comp.GetIdFromString(comp.add_a_project);
+                                                        let topic = response.added_application_p_topic;
+                                                        comp.applications.push({id: id, email: email, first_name: first_name, second_name: second_name, project_id: project_id, topic: topic});
+                                                    }
                                                 }
                                                 comp.adding_application = false;
                                             }

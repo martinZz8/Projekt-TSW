@@ -115,8 +115,24 @@
                             </v-row>
                         </v-col>
                     </v-row>
+                    <v-row>
+                        <v-col clos="12" class="pa-0" style="background-color: #2b3335;">
+                            <v-row justify="center" class="pt-2">
+                                <v-col cols="11">
+                                    <v-alert v-model="register_failure" type="error">
+                                        Nie udało się zarejestrować konta. Spróbuj ponownie później.<br>{{failure_message}}
+                                        <v-btn rounded color="black" text @click="register_failure=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="register_success" type="success">
+                                        Pomyślnie zarejestrowano konto. Musisz jeszcze poczekać na akceptację konta przez administratora przed zalogowaniem się.
+                                        <v-btn rounded color="black" text @click="register_success=false">OK</v-btn>
+                                    </v-alert>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
                     <v-row v-if="!logged_in" justify="center" style="background-color: #2b3335; min-height: 600px;">
-                        <v-col cols="11" xs="11" sm="7" md="6" lg="4"xl="3">
+                        <v-col cols="11" xs="11" sm="7" md="6" lg="4" xl="3">
                             <v-card dark :loading="register_in_progress" class="mt-16 mb-16">
                                 <v-alert v-model="input_alert_1" type="error">
                                     Podaj hasło.
@@ -134,14 +150,6 @@
                                     Powtórzone hasło jest błędne.
                                     <v-btn rounded color="black" text @click="input_alert_4=false">OK</v-btn>
                                 </v-alert>
-                                <v-alert v-model="register_failure" type="error">
-                                    Nie udało się zarejestrować konta. {{failure_message}}
-                                    <v-btn rounded color="black" text @click="register_failure=false">OK</v-btn>
-                                </v-alert>
-                                <v-alert v-model="register_success" type="success">
-                                    Pomyślnie zarejestrowano konto. Musisz jeszcze poczekać na akceptację konta przez administratora przed zalogowaniem się.
-                                    <v-btn rounded color="black" text @click="register_success=false">OK</v-btn>
-                                </v-alert>
                                 <v-card-title class="headline">Podaj dane do rejestracji</v-card-title>
                                 <v-divider></v-divider>
                                 <v-container>
@@ -151,6 +159,7 @@
                                     <v-checkbox v-model="agree_checkbox" color="green" :error="error_checkbox" @click="error_checkbox = false" :label="'Wyrażam zgodę na przetwarzanie podanych przeze mnie danych w celu rejestracji konta na tej witrynie.'"></v-checkbox>
                                 </v-container>
                                 <v-card-actions>
+                                    <p style="margin-bottom: 0px; margin-left: 8px;">Masz już konto? <a href="../frontend/login.html">Zaloguj się!</a></p>
                                     <v-spacer></v-spacer>
                                     <v-btn color="blue darken-1" text @click="RegisterAccount()">Zarejestruj konto</v-btn>
                                 </v-card-actions>

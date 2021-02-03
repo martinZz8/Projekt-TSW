@@ -115,6 +115,22 @@
                             </v-row>
                         </v-col>
                     </v-row>
+                    <v-row>
+                        <v-col clos="12" class="pa-0" style="background-color: #2b3335;">
+                            <v-row justify="center" class="pt-2">
+                                <v-col cols="11">
+                                    <v-alert v-model="login_failure_exeption" type="error" class="mb-0">
+                                        Nie udało się zalogować. Spróbuj ponownie później.<br>{{failure_message}}
+                                        <v-btn rounded color="black" text @click="login_failure_exeption=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="login_failure" type="error">
+                                        Nie udało się zalogować. {{failure_message}}
+                                        <v-btn rounded color="black" text @click="login_failure=false">OK</v-btn>
+                                    </v-alert>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
                     <v-row v-if="!logged_in" justify="center" style="background-color: #2b3335; min-height: 600px;">
                         <v-col cols="11" xs="11" sm="8" md="5" lg="4"xl="3">
                             <v-card dark :loading="login_in_progress" class="mt-16 mb-16">
@@ -125,10 +141,6 @@
                                 <v-alert v-model="input_alert_2" type="error">
                                     Podaj właściwy adres email.
                                     <v-btn rounded color="black" text @click="input_alert_2=false">OK</v-btn>
-                                </v-alert>
-                                <v-alert v-model="login_failure" type="error">
-                                    Nie udało się zalogować. {{failure_message}}
-                                    <v-btn rounded color="black" text @click="login_failure=false">OK</v-btn>
                                 </v-alert>
                                 <v-card-title class="headline">Dane logowania do konta</v-card-title>
                                 <v-divider></v-divider>
@@ -193,6 +205,7 @@
             input_alert_1: false,
             input_alert_2: false,
             login_failure: false,
+            login_failure_exeption: false,
             failure_message: '',
 
         },
@@ -227,18 +240,22 @@
                             if (this.readyState == 4 && this.status == 200) {
                                 let response = JSON.parse(this.responseText);
                                 console.log("Zwrot loginu: ", response);
-                                let login_status = response.login_status;
-                                if (login_status == 'false') {
-                                    comp.failure_message = response.error;
-                                    comp.login_failure = true;
+                                if (response.hasOwnProperty("exeption_error")){
+                                    comp.failure_message = response.exeption_error;
+                                    comp.login_failure_exeption = true;
                                 }
                                 else {
-                                    console.log("Zalogowano ");
-                                    localStorage.setItem('logged_in', true);
-                                    localStorage.setItem('user_email', response.user_email);
-                                    console.log("Zapisane logged_in: ", localStorage.getItem('logged_in'));
-                                    console.log("Zapisane user_email: ", localStorage.getItem('user_email'));
-                                    window.location.replace('../frontend/projects.html');
+                                    let login_status = response.login_status;
+                                    if (login_status == 'false') {
+                                        comp.failure_message = response.error;
+                                        comp.login_failure = true;
+                                    }
+                                    else {
+                                        console.log("Zalogowano ");
+                                        localStorage.setItem('logged_in', true);
+                                        localStorage.setItem('user_email', response.user_email);
+                                        window.location.replace('../frontend/projects.html');
+                                    }
                                 }
                                 comp.login_in_progress = false;
                             }

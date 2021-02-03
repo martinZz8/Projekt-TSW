@@ -20,7 +20,9 @@
             $i = $i + 1;
         }
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        $json[0] = array(
+            "exeption_error" => "Error: " . $e->getMessage(),
+        );
     }
     $connection = null;
     

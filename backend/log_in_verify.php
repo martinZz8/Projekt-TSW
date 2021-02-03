@@ -66,7 +66,9 @@
             }
         }
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        $json = array(
+            "exeption_error" => "Error: " . $e->getMessage(),
+        );
     }
     $connection = null;
 

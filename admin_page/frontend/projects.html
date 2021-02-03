@@ -150,6 +150,14 @@
                                         {{failure_project_update_message}}
                                         <v-btn rounded color="black" text @click="failure_project_update_raport=false">OK</v-btn>
                                     </v-alert>
+                                    <v-alert v-model="failure_download_exeption" type="error">
+                                        Nie udało się pobrać projektów. Spróbuj ponownie później.<br>{{failure_message}}
+                                        <v-btn rounded color="black" text @click="failure_download_exeption=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_project_add_raport_exeption" type="error">
+                                        Nie udało się dodać projektu. Spróbuj ponownie później.<br>{{failure_message}}
+                                        <v-btn rounded color="black" text @click="failure_project_add_raport_exeption=false">OK</v-btn>
+                                    </v-alert>
                                     <v-card-title>
                                         Lista projektów
                                         <v-spacer></v-spacer>
@@ -334,6 +342,9 @@
             update_p_blocked: '0',
             update_input_alert_1: false,
             update_input_alert_2: false,
+            failure_message: '',
+            failure_download_exeption: false,
+            failure_project_add_raport_exeption: false,
         },
         mounted: function() {
             if (localStorage.getItem('admin_logged_in') == 'true' && localStorage.getItem('admin_email')) {
@@ -366,8 +377,17 @@
 
                 xmlhttp.onload = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        comp.projects = JSON.parse(this.responseText);
-                        console.log("Zwrot: ", comp.projects);
+                        response = JSON.parse(this.responseText);
+                        console.log("Zwrot: ", response);
+                        if (response.length > 0) {
+                            if (response[0].hasOwnProperty("exeption_error")){
+                                comp.failure_message = response[0].exeption_error;
+                                comp.failure_download_exeption = true;
+                            }
+                            else {
+                                comp.projects = response;
+                            }
+                        }
                         comp.projects_loading = false;
                     }
                     else if (this.readyState == 4 && this.status == 0) {
@@ -416,27 +436,34 @@
                             if (this.readyState == 4 && this.status == 200) {
                                 let response = JSON.parse(this.responseText);
                                 console.log("Zwrot: ", response);
-                                comp.failure_project_add_message = response.error;
-                                if (comp.failure_project_add_message != '') {
-                                    comp.failure_project_add_raport = true;
+                                if (response.hasOwnProperty("exeption_error")){
+                                    comp.failure_message = response.exeption_error;
+                                    comp.failure_project_add_raport_exeption = true;
                                     comp.add_project_dialog = false;
                                 }
                                 else {
-                                    comp.success_project_add_raport = true;
-                                    comp.add_project_dialog = false;
-                                    let id = response.added_project_id;
-                                    let title = comp.add_p_title;
-                                    let description = comp.add_p_description;
-                                    let technologies = comp.add_p_technologies;
-                                    let blocked = comp.add_p_blocked;
-                                    let select_counter = "0";
-                                    if (comp.add_p_description == '') {
-                                        description = 'Brak opisu.';
+                                    comp.failure_project_add_message = response.error;
+                                    if (comp.failure_project_add_message != '') {
+                                        comp.failure_project_add_raport = true;
+                                        comp.add_project_dialog = false;
                                     }
-                                    if (comp.add_p_technologies == '') {
-                                        technologies = 'Brak wybranych technologii.';
+                                    else {
+                                        comp.success_project_add_raport = true;
+                                        comp.add_project_dialog = false;
+                                        let id = response.added_project_id;
+                                        let title = comp.add_p_title;
+                                        let description = comp.add_p_description;
+                                        let technologies = comp.add_p_technologies;
+                                        let blocked = comp.add_p_blocked;
+                                        let select_counter = "0";
+                                        if (comp.add_p_description == '') {
+                                            description = 'Brak opisu.';
+                                        }
+                                        if (comp.add_p_technologies == '') {
+                                            technologies = 'Brak wybranych technologii.';
+                                        }
+                                        comp.projects.push({id: id, topic: title, description: description, technologies: technologies, blocked: blocked, select_counter: select_counter});
                                     }
-                                    comp.projects.push({id: id, topic: title, description: description, technologies: technologies, blocked: blocked, select_counter: select_counter});
                                 }
                                 comp.adding_project = false;
                             }

@@ -1,6 +1,7 @@
 <?php
     include '../../backend/connect_db.php';
 
+    $right_users = array();
     try {
         //Pobranie wszystkich użytkowników
         $connection = connect_db();
@@ -32,8 +33,6 @@
         }
 
         //Wyodrębnienie użytkowników, którzy jeszcze nie aplikowali do żadnego projektu
-        //tu jest błąd
-        $right_users = array();
         $i = 0;
         foreach ($all_users as $user) {
             $flag = true;
@@ -49,7 +48,9 @@
             }
         }
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        $right_users[0] = array(
+            "exeption_error" => "Error: " . $e->getMessage(),
+        );
     }
     $connection = null;
     

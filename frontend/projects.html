@@ -127,9 +127,17 @@
                                         Pomyślnie przesłano i wybrano projekt. Wybrany projekt możesz zobaczyć w zakładce "Mój projekt".
                                         <v-btn rounded color="black" text @click="success_raport2=false">OK</v-btn>
                                     </v-alert>
-                                    <v-alert v-model="failure_raport" type="error">
+                                    <v-alert v-model="failure_raport1" type="error">
                                         Nie udało się wybrać projektu. {{failure_message}}
-                                        <v-btn rounded color="black" text @click="failure_raport=false">OK</v-btn>
+                                        <v-btn rounded color="black" text @click="failure_raport1=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_raport2" type="error">
+                                        Nie udało się przesłać i wybrać projektu. {{failure_message}}
+                                        <v-btn rounded color="black" text @click="failure_raport2=false">OK</v-btn>
+                                    </v-alert>
+                                    <v-alert v-model="failure_download_exeption" type="error">
+                                        Nie udało się pobrać projektów. Spróbuj ponownie później.<br>{{failure_message}}
+                                        <v-btn rounded color="black" text @click="failure_download_exeption=false">OK</v-btn>
                                     </v-alert>
                                     <v-card-title>
                                         Lista projektów
@@ -277,7 +285,9 @@
             submit_dialog: false,
             input_alert_1: false,
             success_raport1: false,
-            failure_raport: false,
+            failure_raport1: false,
+            failure_raport2: false,
+            failure_download_exeption: false,
             failure_message: '',
             select_own_project_dialog: false,
             submitting_report2: false,
@@ -328,8 +338,17 @@
 
                 xmlhttp.onload = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        comp.projects = JSON.parse(this.responseText);
-                        console.log("Zwrot: ", comp.projects);
+                        let response = JSON.parse(this.responseText);
+                        console.log("Zwrot: ", response);
+                        if (response.length > 0) {
+                            if (response[0].hasOwnProperty("exeption_error")){
+                                comp.failure_message = response[0].exeption_error;
+                                comp.failure_download_exeption = true;
+                            }
+                            else {
+                                comp.projects = response;
+                            }
+                        }
                         comp.projects_loading = false;
                     }
                     else if (this.readyState == 4 && this.status == 0) {
@@ -383,7 +402,7 @@
                             comp.failure_message = this.responseText;
                             console.log("Zwrot: ", comp.failure_message);
                             if (comp.failure_message != '') {
-                                comp.failure_raport = true;
+                                comp.failure_raport1 = true;
                                 comp.submit_dialog = false;
                             }
                             else {
@@ -443,7 +462,7 @@
                                     comp.failure_message = this.responseText;
                                     console.log("Zwrot: ", comp.failure_message);
                                     if (comp.failure_message != '') {
-                                        comp.failure_raport = true;
+                                        comp.failure_raport2 = true;
                                         comp.select_own_project_dialog = false;
                                     }
                                     else {

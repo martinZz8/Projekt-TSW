@@ -127,6 +127,10 @@
                                         Nie udało się zrezygnować z projektu. {{failure_leaving_message}}
                                         <v-btn rounded color="black" text @click="failure_leaving_raport=false">OK</v-btn>
                                     </v-alert>
+                                    <v-alert v-model="failure_download_exeption" type="error">
+                                        Nie udało się pobrać projektu. Spróbuj ponownie później.<br>{{failure_message}}
+                                        <v-btn rounded color="black" text @click="failure_download_exeption=false">OK</v-btn>
+                                    </v-alert>
                                     <v-card-title>
                                         Twój projekt
                                     </v-card-title>
@@ -226,6 +230,8 @@
             failure_leaving_message: '',
             failure_leaving_raport: false,
             success_leaving_raport: false,
+            failure_download_exeption: false,
+            failure_message: '',
 
         },
         mounted: function() {
@@ -265,8 +271,17 @@
 
                 xmlhttp.onload = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        comp.my_project = JSON.parse(this.responseText);
-                        console.log("Zwrot: ", comp.my_project);
+                        let response = JSON.parse(this.responseText);
+                        console.log("Zwrot: ", response);
+                        if (response.length > 0) {
+                            if(response[0].hasOwnProperty("exeption_error")){
+                                comp.failure_message = response[0].exeption_error;
+                                comp.failure_download_exeption = true;
+                            }
+                            else {
+                                comp.my_project = response;
+                            }
+                        }
                         comp.project_loading = false;
                     }
                     else if (this.readyState == 4 && this.status == 0) {
